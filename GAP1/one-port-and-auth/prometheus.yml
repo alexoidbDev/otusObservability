@@ -1,0 +1,52 @@
+global:
+  scrape_interval: 5s
+scrape_configs:
+  - job_name: 'prometheus_master'
+    static_configs:
+      - targets: ['localhost:9090']
+  - job_name: 'node_exporter_wordpress'
+    basic_auth:
+      username: promuser
+      password: PromPaSSw0rd
+    metrics_path: /exporters/node/metrics
+    static_configs:
+      - targets: ['wordpress']
+  - job_name: 'mysqld'
+    basic_auth:
+      username: promuser
+      password: PromPaSSw0rd
+    metrics_path: /exporters/mysqld/metrics
+    static_configs:
+      - targets: ['wordpress']
+  - job_name: 'blackbox_check_wordpress'
+    basic_auth:
+      username: promuser
+      password: PromPaSSw0rd
+    metrics_path: /exporters/blackbox/probe
+    params:
+      module:
+        - http_2xx
+    static_configs:
+      - targets:
+        - mysite.local
+    relabel_configs:
+    - source_labels: [__address__]
+      target_label: __param_target
+    - source_labels: [__param_target]
+      target_label: instance
+    - replacement: wordpress
+      target_label: __address__
+  - job_name: "nginx_exporter"
+    basic_auth:
+      username: promuser
+      password: PromPaSSw0rd
+    metrics_path: /exporters/nginx/metrics
+    static_configs:
+      - targets: ['wordpress']
+  - job_name: "php-fpm_exporter"
+    basic_auth:
+      username: promuser
+      password: PromPaSSw0rd
+    metrics_path: /exporters/phpfpm/metrics
+    static_configs:
+      - targets: ['wordpress']
