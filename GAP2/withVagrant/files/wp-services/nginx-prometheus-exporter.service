@@ -1,0 +1,12 @@
+[Unit]
+Description=Prometheus nginx exporter
+After=network.target
+
+[Service]
+User=nodeusr
+Group=nodeusr
+Type=simple
+ExecStart=/usr/local/bin/nginx-prometheus-exporter --nginx.scrape-uri=http://localhost/stub_status
+
+[Install]
+WantedBy=multi-user.target

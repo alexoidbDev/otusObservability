@@ -1,0 +1,13 @@
+[Unit]
+Description=Blackbox Exporter Service
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+User=nodeusr
+Group=nodeusr
+ExecStart=/usr/local/bin/blackbox_exporter --config.file=/etc/prometheus/exporters/blackbox.yml
+
+[Install]
+WantedBy=multi-user.target
