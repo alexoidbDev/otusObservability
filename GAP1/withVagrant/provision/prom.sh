@@ -1,11 +1,14 @@
 #!/bin/bash
 sudo -i
 
+#cp /opt/files/*.cer /usr/local/share/ca-certificates/
+#update-ca-certificates
+
 echo 192.168.250.21 mysite.local www.mysite.local wordpress >> /etc/hosts
 
 apt update -y
 apt install wget -y
-wget https://github.com/prometheus/prometheus/releases/download/v2.44.0/prometheus-2.44.0.linux-amd64.tar.gz
+wget --no-check-certificate https://github.com/prometheus/prometheus/releases/download/v2.44.0/prometheus-2.44.0.linux-amd64.tar.gz
 useradd --no-create-home --shell /bin/false prometheus
 mkdir /etc/prometheus
 mkdir -p /var/lib/prometheus

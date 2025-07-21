@@ -2,6 +2,9 @@
 
 #sudo dnf -y update
 sudo -i 
+#cp /opt/files/*.cer /etc/pki/ca-trust/source/anchors/
+#update-ca-trust extract
+
 dnf -y install nginx php php-fpm php-curl php-dom php-mbstring php-zip php-gd php-intl mariadb-server php-mysqli wget
 dnf -y install epel-release
 dnf -y install -y php-imagick
