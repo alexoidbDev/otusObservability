@@ -1,0 +1,16 @@
+[Unit]
+Description=VictoriaMetrics
+After=network.target
+
+[Service]
+Type=simple
+User=victoriametrics
+PIDFile=/run/victoriametrics/victoriametrics.pid
+ExecStart=/usr/local/bin/victoria-metrics \
+  -storageDataPath=/var/lib/victoriametrics \
+  -retentionPeriod=2w
+ExecStop=/bin/kill -s SIGTERM $MAINPID
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
