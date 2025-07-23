@@ -21,7 +21,7 @@ mv prometheus-2.44.0.linux-amd64 prometheuspackage
 cp prometheuspackage/{prometheus,promtool} /usr/local/bin/
 chown prometheus:prometheus /usr/local/bin/{prometheus,promtool}
 cp -r prometheuspackage/{consoles,console_libraries} /etc/prometheus
-cp /opt/files/prometheus.yml /etc/prometheus/prometheus.yml
+cp /opt/files/{rules,prometheus,alertmanager}.yml /etc/prometheus/
 
 
 ALERT_MANAGER=alertmanager-0.28.1.linux-amd64
@@ -29,7 +29,7 @@ ALERT_MANAGER_ARCH=$ALERT_MANAGER.tar.gz
 wget --no-check-certificate https://github.com/prometheus/alertmanager/releases/download/v0.28.1/$ALERT_MANAGER_ARCH
 tar -zxf $ALERT_MANAGER_ARCH
 cp $ALERT_MANAGER/{alertmanager,amtool} /usr/local/bin/
-cp $ALERT_MANAGER/alertmanager.yml /etc/prometheus
+# cp $ALERT_MANAGER/alertmanager.yml /etc/prometheus
 mkdir -p /var/lib/alertmanager
 echo "ALERTMANAGER_OPTS=\"\"" > /etc/default/alertmanager
 chown -R prometheus:prometheus /etc/prometheus /var/lib/alertmanager /usr/local/bin/{alertmanager,amtool} /var/lib/prometheus /etc/default/alertmanager
