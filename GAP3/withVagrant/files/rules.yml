@@ -1,19 +1,19 @@
 groups:
   - name: alert_group
     rules:
-      - alert: InstanceDown
+      - alert: NodeExporter
         expr: up{job="node_exporter"} == 0
-        for: 0m
+        for: 20s
         labels:
           severity: critical
         annotations:
           summary: "Node exporter {{ $labels.instance }} is unavailable"
           description: "Serviceis unavailable\n VALUE = {{ $value }}\n LABELS = {{ $labels }}"
-      - alert: APIHighRequestLatency
-        expr: api_http_request_latencies_second{quantile="0.5"} > 1
-        for: 1m
+      - alert: nginxExporter
+        expr: up{job="nginx_exporter"} == 0
+        for: 20s
         labels:
           severity: warning
         annotations:
-          summary: "High request latency on {{ $labels.instance }}"
-          description: "{{ $labels.instance }} has a median request latency above 1s (current value: {{ $value }}s)"    
+          summary: "Nginx exporter {{ $labels.instance }} is unavailable"
+          description: "Serviceis unavailable\n VALUE = {{ $value }}\n LABELS = {{ $labels }}"    
