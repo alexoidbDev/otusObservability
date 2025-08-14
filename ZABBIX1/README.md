@@ -53,5 +53,5 @@ otus_important_metrics[metric3]
       ![Metric1](/ZABBIX1/ScreenMetric1.png "Metric1.")
     * Metric2
       ![Metric3](/ZABBIX1/ScreenMetric2.png "Metric2.")
-    * Metric3 
+    * Metric3 (во время 1-го срабатывания триггера отправка в телеграм была не донастроена)
       ![Metric3](/ZABBIX1/ScreenMetric3.png "Metric3.")            
