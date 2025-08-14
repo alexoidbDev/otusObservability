@@ -1,0 +1,28 @@
+ENV['VAGRANT_SERVER_URL'] = 'http://vagrant.elab.pro'
+
+Vagrant.configure("2") do |config|
+    config.vm.synced_folder ".", "/vagrant", disabled: true
+    config.vm.synced_folder "files", "/opt/files"
+    # zabbix server VM
+    config.vm.define "zabbix" do |box|
+      box.vm.box = "ubuntu/jammy64"
+      box.vm.provision "init", type: "shell", path: "provision/zabbix.sh"
+      box.vm.host_name = "zabbix"
+      box.vm.network "private_network", ip: "192.168.250.21"
+      box.vm.provider "virtualbox" do |v|
+        v.memory = 2048
+        v.cpus = 2
+      end
+    end
+    # monitored vm
+    config.vm.define "vm-mon" do |box|
+      box.vm.box = "ubuntu/jammy64"
+      box.vm.host_name = "vm-mon"
+      box.vm.provision "init", type: "shell", path: "provision/vm-mon.sh"
+      box.vm.network "private_network", ip: "192.168.250.22"
+      box.vm.provider "virtualbox" do |v|
+        v.memory = 1048
+        v.cpus = 2
+      end
+    end
+end
