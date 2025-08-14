@@ -23,7 +23,7 @@ otus_important_metrics[metric3]
 
 ## Решение 
  
- * t.me/zbxotsch - [ссылкa на телеграмм канал](https://t.me/zbxotsch) с уже отпраленными уведомлениями
+ * t.me/zbxotsch - [ссылкa на телеграмм канал](https://t.me/zbxotsch) с уже отпраленными уведомлениями. [Скрин телеграм канала](/ZABBIX1/ScreenTelegram.png)
  * metrics.sh - скрипт генерации метрик
  ```
     #!/bin/bash
