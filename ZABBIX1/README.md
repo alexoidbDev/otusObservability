@@ -50,8 +50,8 @@ otus_important_metrics[metric3]
  ```
  * скриншоты графиков полученных метрик - ScreenMetric1.png, ScreenMetric2.png, ScreenMetric3.png
     * Metric1 
-      ![Metric1](/alexoidbDev/otusObservability/tree/main/ZABBIX1/ScreenMetric1.png "Metric1.")
+      ![Metric1](/ZABBIX1/ScreenMetric1.png "Metric1.")
     * Metric2
-      ![Metric3](/alexoidbDev/otusObservability/tree/main/ZABBIX1/ScreenMetric2.png "Metric2.")
+      ![Metric3](/ZABBIX1/ScreenMetric2.png "Metric2.")
     * Metric3 
-      ![Metric3](/alexoidbDev/otusObservability/tree/main/ZABBIX1/ScreenMetric3.png "Metric3.")            
+      ![Metric3](/ZABBIX1/ScreenMetric3.png "Metric3.")            
