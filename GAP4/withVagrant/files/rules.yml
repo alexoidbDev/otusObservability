@@ -1,0 +1,19 @@
+groups:
+  - name: alert_group
+    rules:
+      - alert: NodeExporter
+        expr: up{job="node_exporter"} == 0
+        for: 20s
+        labels:
+          severity: critical
+        annotations:
+          summary: "Node exporter {{ $labels.instance }} is unavailable"
+          description: "Serviceis unavailable\n VALUE = {{ $value }}\n LABELS = {{ $labels }}"
+      - alert: nginxExporter
+        expr: up{job="nginx_exporter"} == 0
+        for: 20s
+        labels:
+          severity: warning
+        annotations:
+          summary: "Nginx exporter {{ $labels.instance }} is unavailable"
+          description: "Serviceis unavailable\n VALUE = {{ $value }}\n LABELS = {{ $labels }}"    

@@ -1,0 +1,13 @@
+[Unit]
+Description=Prometheus php-fpm exporter
+After=network.target
+
+[Service]
+User=nodeusr
+Group=nodeusr
+Type=simple
+ExecStart=/usr/local/bin/php-fpm-exporter --endpoint="http://mysite.local/status"
+#--addr="172.26.52.196:8080"
+
+[Install]
+WantedBy=multi-user.target
