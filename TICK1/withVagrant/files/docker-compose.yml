@@ -1,0 +1,52 @@
+services:
+
+  influxdb:
+    image: influxdb:1.11.8
+    hostname: influxdb
+    container_name: influxdb
+    restart: always
+    ports:
+      - "8086:8086"
+    environment:
+      - INFLUXDB_DB=wp_data
+      - INFLUXDB_HTTP_AUTH_ENABLED=false
+      - INFLUXDB_ADMIN_USER=admin
+      - INFLUXDB_ADMIN_PASSWORD=admin
+    volumes:
+      - ./volumes/config/influxdb.conf:/etc/influxdb/influxdb.conf
+      - ./volumes/influxdb:/var/lib/influxdb
+
+  chronograf:
+    image: chronograf:1.10.5
+    container_name: chronograf
+    hostname: chronograf
+    restart: always
+    ports:
+      - 9888:8888
+    environment:
+      - INFLUXDB_URL=http://influxdb:8086
+      - INFLUXDB_USERNAME=admin
+      - INFLUXDB_PASSWORD=admin
+    volumes:
+      - "./volumes/chronograf:/var/lib/chronograf"
+      - "./volumes/config/chronograf.conf:/etc/chronograf/chronograf.conf"
+    depends_on:
+      - influxdb 
+
+  kapacitor:
+    image: kapacitor:1.6
+    container_name: kapacitor
+    ports:
+      - "9092:9092"
+    environment:
+      - KAPACITOR_INFLUXDB_0_URLS_0=http://influxdb:8086
+      - KAPACITOR_INFLUXDB_0__USERNAME=admin
+      - KAPACITOR_INFLUXDB_0__PASSWORD=admin
+      - KAPACITOR_INFLUXDB_0_TIMEOUT=30s
+      - KAPACITOR_INFLUXDB_SUBSCRIPTION_PROTOCOL=http
+      - KAPACITOR_INFLUXDB_0_INSECURE_SKIP_VERIFY=true
+    volumes:
+      - "./volumes/kapacitor:/var/lib/kapacitor"
+      - "./volumes/config/kapacitor.conf:/etc/kapacitor/kapacitor.conf"
+    depends_on:
+      - influxdb
