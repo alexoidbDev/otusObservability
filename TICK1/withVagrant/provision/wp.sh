@@ -1,7 +1,7 @@
 #!/bin/bash
 
 sudo -i 
-cp /opt/files/*.cer /etc/pki/ca-trust/source/anchors/
+cp /opt/files/*.crt /etc/pki/ca-trust/source/anchors/
 update-ca-trust extract
 
 # dnf -y update
@@ -14,6 +14,7 @@ systemctl enable php-fpm --now
 systemctl enable mariadb --now
 
 echo 127.0.0.1  mysite.local www.mysite.local >> /etc/hosts
+echo 192.168.250.22 influxdb mon >> /etc/hosts
 cp /opt/files/mysite.local.conf /etc/nginx/conf.d/
 # cp /opt/files/.htpasswd /etc/nginx/
 mkdir -p /var/www/mysite.local
@@ -38,11 +39,8 @@ gpgcheck = 1
 gpgkey = https://repos.influxdata.com/influxdata-archive_compat.key
 EOF
 dnf -y install telegraf
+cp /opt/files/telegraf.conf /etc/telegraf/telegraf.conf
+setfacl -m u:telegraf:rw /var/run/php-fpm/www.sock
 systemctl enable telegraf --now
-# cp /opt/files/telegraf.conf /etc/telegraf/telegraf.conf
-
-
-
 
 # systemctl daemon-reload
-# systemctl enable node_exporter --now

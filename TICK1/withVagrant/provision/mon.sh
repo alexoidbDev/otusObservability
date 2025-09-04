@@ -1,13 +1,14 @@
 #!/bin/bash
 sudo -i
 
-cp /opt/files/*.cer /usr/local/share/ca-certificates/
+cp /opt/files/*.crt /usr/local/share/ca-certificates/
 update-ca-certificates
 
 echo 192.168.250.21 mysite.local www.mysite.local wordpress >> /etc/hosts
 mkdir -p /root/volumes/influxdb
 mkdir -p /root/volumes/chronograf
 mkdir -p /root/volumes/config
+chmod 777 -R /root/volumes/
 cp /opt/files/config/* /root/volumes/config/
 cp /opt/files/docker-compose.yml /root/
 
@@ -21,14 +22,17 @@ echo \
   "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
   $(. /etc/os-release && echo "${UBUNTU_CODENAME:-$VERSION_CODENAME}") stable" | \
   tee /etc/apt/sources.list.d/docker.list > /dev/null
-# apt-get -y update 
-# apt-get -y install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
-apt-get -y -o Acquire::https::Verify-Peer=false update 
-apt-get -y -o Acquire::https::Verify-Peer=false install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
-# echo  { \"insecure-registries\": [\"registry-1.docker.io:443\"] } > /etc/docker/daemon.json
-# systemctl restart docker
-# mkdir -p /etc/docker/certs.d/registry-1.docker.io
-# ex +’/BEGIN CERTIFICATE/,/END CERTIFICATE/p’ <(echo | openssl s_client -showcerts -connect registry-1.docker.io:443) -scq > /etc/docker/certs.d/registry-1.docker.io/docker_registry.crt
+apt-get -y update 
+apt-get -y install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+# apt-get -y -o Acquire::https::Verify-Peer=false update 
+# apt-get -y -o Acquire::https::Verify-Peer=false install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+
+cat > /etc/docker/daemon.json << EOL
+{
+          "insecure-registries": ["registry-1.docker.io"]
+} 
+EOL
+systemctl restart docker
 # ##openssl s_client -showcerts -connect registry-1.docker.io:443 < /dev/null | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' > /etc/docker/certs.d/registry-1.docker.io/ca.crt
 docker compose up -d
 
