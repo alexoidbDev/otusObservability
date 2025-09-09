@@ -1,0 +1,11 @@
+stream
+    |from()
+        .measurement('http_response')
+        .where(lambda: "service" == 'mysite')
+    |alert()
+        .id('HTTP_500_Errors')
+        .message('HTTP 500 error detected: Status code {{ index .Fields "status_code" }} on {{ index .Tags "url" }}')
+        .warn(lambda: "http_response_code" >= 500 AND "http_response_code" < 600)
+        .crit(lambda: "http_response_code" >= 500 AND "http_response_code" < 600)
+        .log('/tmp/alerts_500.log')
+        .telegram() 

@@ -1,0 +1,12 @@
+dbrp "wp_data"."autogen"
+
+stream
+  |from()
+    .measurement('net_response')
+    .where(lambda: "server" == 'localhost' AND "port" == '80')
+  |alert()
+    .id('Nginx Port Unreachable')
+    .crit(lambda: "result_code" != 0)
+    .message('Nginx port is not responding')
+    .log('/tmp/alerts_nginx.log')
+    .telegram() 

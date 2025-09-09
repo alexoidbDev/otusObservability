@@ -1,0 +1,12 @@
+dbrp "wp_data"."autogen"
+
+stream
+  |from()
+    .measurement('net_response')
+    .where(lambda: "server" == 'localhost' AND "port" == '3306')
+  |alert()
+    .id('MariaDB Port Unreachable')
+    .crit(lambda: "result_code" != 0)
+    .message('MariaDB port is not responding')
+    .log('/tmp/alerts_mariadb.log')
+    .telegram() 
