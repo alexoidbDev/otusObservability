@@ -19,7 +19,7 @@
 
 ## Решение 
 
-1. На виртуальной машине устанавливаю open source CMS - wordpress, которая включает в себя следующие компоненты: nginx, php-fpm, mysql database (mariadb).
+1. На виртуальной машине устанавливаю open source CMS - wordpress, которая включает в себя следующие компоненты: nginx, php-fpm, mysql database (mariadb). Также как в предыдущих ДЗ.
 2. На эту же виртуальную машину устанавливаю Telegraf и выдаю права на /var/run/php-fpm/www.sock
 ```
 cat <<EOF | sudo tee /etc/yum.repos.d/influxdata.repo
@@ -33,7 +33,14 @@ EOF
 sudo dnf -y install telegraf
 sudo setfacl -m u:telegraf:rw /var/run/php-fpm/www.sock
 ```
-Меняю настройки в [/etc/telegraf/telegraf.conf](/TICK1/telegraf.conf) 
+Добавляю пользователя в mariadb:
+```
+CREATE USER 'telegraf'@'localhost' IDENTIFIED BY 'TelegrafPaSSw0rd' WITH MAX_USER_CONNECTIONS 3;
+GRANT PROCESS, REPLICATION CLIENT, SELECT ON *.* TO 'telegraf'@'localhost';
+```
+
+Меняю настройки в [/etc/telegraf/telegraf.conf](/TICK1/telegraf.conf)  
+  
 Запускаю службу telegraf:
 ```
 sudo systemctl enable telegraf --now
@@ -145,7 +152,7 @@ root@mon:~# docker exec kapacitor head -1 /tmp/alerts_nginx.log
         return 500;
     }
 ```
-После перезапуска в папке /tmp контейнера kapacitor появился  /tmp/alerts_500.log
+После перезапуска nginx в папке /tmp контейнера kapacitor появился  /tmp/alerts_500.log
 ```
 root@mon:~# docker exec kapacitor head -1 /tmp/alerts_500.log
 {"id":"HTTP_500_Errors","message":"HTTP 500 error detected: Status code \u003cno value\u003e on ","details":"{\u0026#34;Name\u0026#34;:\u0026#34;http_response\u0026#34;,\u0026#34;TaskName\u0026#34;:\u0026#34;check_500\u0026#34;,\u0026#34;Group\u0026#34;:\u0026#34;nil\u0026#34;,\u0026#34;Tags\u0026#34;:{\u0026#34;host\u0026#34;:\u0026#34;wp\u0026#34;,\u0026#34;method\u0026#34;:\u0026#34;GET\u0026#34;,\u0026#34;result\u0026#34;:\u0026#34;success\u0026#34;,\u0026#34;server\u0026#34;:\u0026#34;http://mysite.local:80\u0026#34;,\u0026#34;service\u0026#34;:\u0026#34;mysite\u0026#34;,\u0026#34;status_code\u0026#34;:\u0026#34;500\u0026#34;},\u0026#34;ServerInfo\u0026#34;:{\u0026#34;Hostname\u0026#34;:\u0026#34;kapacitor\u0026#34;,\u0026#34;ClusterID\u0026#34;:\u0026#34;3afa279c-51a6-432b-a75a-ae4094d3a078\u0026#34;,\u0026#34;ServerID\u0026#34;:\u0026#34;319556c3-4b74-4d3e-bde5-121bb26b26fc\u0026#34;},\u0026#34;ID\u0026#34;:\u0026#34;HTTP_500_Errors\u0026#34;,\u0026#34;Fields\u0026#34;:{\u0026#34;content_length\u0026#34;:177,\u0026#34;http_response_code\u0026#34;:500,\u0026#34;response_string_match\u0026#34;:1,\u0026#34;response_time\u0026#34;:0.00418358,\u0026#34;result_code\u0026#34;:0,\u0026#34;result_type\u0026#34;:\u0026#34;success\u0026#34;},\u0026#34;Level\u0026#34;:\u0026#34;CRITICAL\u0026#34;,\u0026#34;Time\u0026#34;:\u0026#34;2025-09-09T13:20:40Z\u0026#34;,\u0026#34;Duration\u0026#34;:0,\u0026#34;Message\u0026#34;:\u0026#34;HTTP 500 error detected: Status code \\u003cno value\\u003e on \u0026#34;}\n","time":"2025-09-09T13:20:40Z","duration":0,"level":"CRITICAL","data":{"series":[{"name":"http_response","tags":{"host":"wp","method":"GET","result":"success","server":"http://mysite.local:80","service":"mysite","status_code":"500"},"columns":["time","content_length","http_response_code","response_string_match","response_time","result_code","result_type"],"values":[["2025-09-09T13:20:40Z",177,500,1,0.00418358,0,"success"]]}]},"previousLevel":"OK","recoverable":true}
