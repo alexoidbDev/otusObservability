@@ -1,0 +1,40 @@
+version: '3'
+
+services:
+  filebeat:
+    image: elastic/filebeat:8.19.4 
+    container_name: filebeat
+    restart: unless-stopped
+    user: root
+    # env_file: .env
+    environment:
+      - - ELASTICSEARCH_HOSTS=http://elastic.local:9200
+    volumes:
+      - app-logs:/logs
+      - ./conf/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+      # - dbdata:/var/lib/mysql
+    # command: '--default-authentication-plugin=mysql_native_password'
+    # networks:
+    #   - app-network
+  metricbeat:
+    image: elastic/metricbeat:8.19.4
+    container_name: metricbeat
+    restart: unless-stopped
+    user: root
+    volumes:
+      - ./conf/metricbeat.yml:/usr/share/metricbeat/metricbeat.yml:ro
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "/sys/fs/cgroup:/hostfs/sys/fs/cgroup:ro"
+      - "/proc:/hostfs/proc:ro"
+      - "/:/hostfs:ro"
+    environment:
+    #  - ELASTIC_USER=elastic
+    #  - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
+     - ELASTIC_HOSTS=http://elastic.local:9200
+     - KIBANA_HOSTS=http://elastic.local:5601
+    #  - LOGSTASH_HOSTS=http://logstash01:9600
+
+
+
+volumes:
+  app-logs:    

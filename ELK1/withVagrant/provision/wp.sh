@@ -13,7 +13,9 @@ systemctl enable nginx --now
 systemctl enable php-fpm --now
 systemctl enable mariadb --now
 
-echo 127.0.0.1  mysite.local www.mysite.local >> /etc/hosts
+echo 127.0.0.1  mysite.local www.mysite.local wordpress >> /etc/hosts
+echo 192.168.250.22 ek elastic elastic.local >> /etc/hosts
+
 cp /opt/files/mysite.local.conf /etc/nginx/conf.d/
 cp /opt/files/.htpasswd /etc/nginx/
 mkdir -p /var/www/mysite.local
@@ -32,4 +34,15 @@ systemctl reload nginx
 # cp /opt/files/wp-services/* /etc/systemd/system/
 
 # echo "deb [trusted=yes] https://mirror.yandex.ru/mirrors/elastic/7/ stable main" | sudo tee /etc/apt/sources.list.d/elastic-7.x.list
-echo "deb [trusted=yes] https://mirror.yandex.ru/mirrors/elastic/8/ stable main" | sudo tee /etc/apt/sources.list.d/elastic-8.x.list
+# echo "deb [trusted=yes] https://mirror.yandex.ru/mirrors/elastic/8/ stable main" | sudo tee /etc/apt/sources.list.d/elastic-8.x.list
+
+sudo dnf -y install dnf-plugins-core
+sudo dnf -y config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+sudo dnf -y install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+sudo systemctl enable --now docker
+
+
+cp /opt/files/docker-compose.yml ./
+mkdir -p ./conf/
+cp /opt/files/conf/* ./conf/
+# docker-compose up -d

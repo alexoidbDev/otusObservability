@@ -1,40 +1,35 @@
 #!/bin/bash
 sudo -i
 
-#cp /opt/files/*.cer /usr/local/share/ca-certificates/
-#update-ca-certificates
+cp /opt/files/checkcert.cer /usr/local/share/ca-certificates/checkcert.crt
+update-ca-certificates
 
-cp /opt/files/prom-services/* /etc/systemd/system/
+# cp /opt/files/prom-services/* /etc/systemd/system/
 
 echo 192.168.250.21 mysite.local www.mysite.local wordpress >> /etc/hosts
-echo 192.168.250.23 victoriametrics >> /etc/hosts
+
+echo "deb [trusted=yes] https://mirror.yandex.ru/mirrors/elastic/8/ stable main" | sudo tee /etc/apt/sources.list.d/elastic-8.x.list
 
 apt update -y
 apt install wget -y
-wget --no-check-certificate https://github.com/prometheus/prometheus/releases/download/v2.44.0/prometheus-2.44.0.linux-amd64.tar.gz
-useradd --no-create-home --shell /bin/false prometheus
-mkdir /etc/prometheus
-mkdir -p /var/lib/prometheus
+wget --no-check-certificate "https://storage.yandexcloud.net/cloud-certs/CA.pem" --output-document ./YACA.crt
+cp ./YACA.crt /usr/local/share/ca-certificates/
+update-ca-certificates
 
-tar -xvzf prometheus-2.44.0.linux-amd64.tar.gz
-mv prometheus-2.44.0.linux-amd64 prometheuspackage
-cp prometheuspackage/{prometheus,promtool} /usr/local/bin/
-chown prometheus:prometheus /usr/local/bin/{prometheus,promtool}
-cp -r prometheuspackage/{consoles,console_libraries} /etc/prometheus
-cp /opt/files/{rules,prometheus,alertmanager}.yml /etc/prometheus/
+apt update -y
+apt -y install elasticsearch
+sed -i 's/xpack.security.enabled: true/xpack.security.enabled: false/g' /etc/elasticsearch/elasticsearch.yml
+systemctl enable elasticsearch.service --now
 
+apt -y install kibana
+export TOKEN=$(/usr/share/elasticsearch/bin/elasticsearch-create-enrollment-token -s kibana)
+echo server.host: \"0.0.0.0\" >> /etc/kibana/kibana.yml
+echo elasticsearch.serviceAccountToken: \"$TOKEN\" >> /etc/kibana/kibana.yml
+echo elasticsearch.hosts: [\"http://localhost:9200\"] >> /etc/kibana/kibana.yml
+systemctl enable kibana --now
 
-ALERT_MANAGER=alertmanager-0.28.1.linux-amd64
-ALERT_MANAGER_ARCH=$ALERT_MANAGER.tar.gz
-wget --no-check-certificate https://github.com/prometheus/alertmanager/releases/download/v0.28.1/$ALERT_MANAGER_ARCH
-tar -zxf $ALERT_MANAGER_ARCH
-cp $ALERT_MANAGER/{alertmanager,amtool} /usr/local/bin/
-# cp $ALERT_MANAGER/alertmanager.yml /etc/prometheus
-mkdir -p /var/lib/alertmanager
-echo "ALERTMANAGER_OPTS=\"\"" > /etc/default/alertmanager
-chown -R prometheus:prometheus /etc/prometheus /var/lib/alertmanager /usr/local/bin/{alertmanager,amtool} /var/lib/prometheus /etc/default/alertmanager
-
-
-systemctl daemon-reload
-systemctl enable prometheus --now
-systemctl enable prometheus-alertmanager --now
+apt -y install heartbeat-elastic
+#  cp /opt/files/monitors/* /etc/heartbeat/monitors.d/
+cp /opt/files/heartbeat.yml /etc/heartbeat/
+systemctl enable heartbeat-elastic --now
+# systemctl daemon-reload
