@@ -45,4 +45,4 @@ sudo systemctl enable --now docker
 cp /opt/files/docker-compose.yml ./
 mkdir -p ./conf/
 cp /opt/files/conf/* ./conf/
-# docker-compose up -d
+docker compose up -d

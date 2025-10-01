@@ -1,9 +1,11 @@
 filebeat.inputs:
 - type: filestream
-  id: my-application-logs
+  id: wp-logs
   enabled: true
   paths:
-    - /var/log/app_logs/*.log
+    - /var/log/hostlog/nginx/*.log
+    - /var/log/hostlog/mariadb/*.log
+    - /var/log/hostlog/php-fm/*.log
 output.elasticsearch:
   hosts: '${ELASTICSEARCH_HOSTS}'
   # username: '${ELASTICSEARCH_USERNAME:}'

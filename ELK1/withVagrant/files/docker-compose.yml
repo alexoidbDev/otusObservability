@@ -8,14 +8,17 @@ services:
     user: root
     # env_file: .env
     environment:
-      - - ELASTICSEARCH_HOSTS=http://elastic.local:9200
+      - ELASTICSEARCH_HOSTS=http://elastic.local:9200
     volumes:
       - app-logs:/logs
+      - /var/log/:/var/log/hostlog/
       - ./conf/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
       # - dbdata:/var/lib/mysql
     # command: '--default-authentication-plugin=mysql_native_password'
     # networks:
     #   - app-network
+    extra_hosts:
+      - "elastic.local:192.168.250.22"
   metricbeat:
     image: elastic/metricbeat:8.19.4
     container_name: metricbeat
@@ -23,6 +26,7 @@ services:
     user: root
     volumes:
       - ./conf/metricbeat.yml:/usr/share/metricbeat/metricbeat.yml:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
       - "/sys/fs/cgroup:/hostfs/sys/fs/cgroup:ro"
       - "/proc:/hostfs/proc:ro"
@@ -33,6 +37,10 @@ services:
      - ELASTIC_HOSTS=http://elastic.local:9200
      - KIBANA_HOSTS=http://elastic.local:5601
     #  - LOGSTASH_HOSTS=http://logstash01:9600
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+      - "mysite.local:host-gateway"
+      - "elastic.local:192.168.250.22"
 
 
 
