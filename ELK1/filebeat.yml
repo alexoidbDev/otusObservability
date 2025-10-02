@@ -31,7 +31,3 @@ output.elasticsearch:
   hosts: '${ELASTICSEARCH_HOSTS}'
   # username: '${ELASTICSEARCH_USERNAME:}'
   # password: '${ELASTICSEARCH_PASSWORD:}'
-  # ssl:
-  #   certificate_authorities: "/usr/share/elasticsearch/config/certs/ca/ca.crt"
-  #   certificate: "/usr/share/elasticsearch/config/certs/filebeat/filebeat.crt"
-  #   key: "/usr/share/elasticsearch/config/certs/filebeat/filebeat.key    

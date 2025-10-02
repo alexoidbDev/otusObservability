@@ -27,3 +27,39 @@ Heartbeat должен проверять доступность следующ�
 ### Компетенции:
 Системы логирования
 - Отправка данных с помощью filebeat, metricbeat и heartbeat
+
+## Решение
+1. На виртуальной машине устанавливаю open source CMS - wordpress, которая включает в себя следующие компоненты: nginx, php-fpm, mysql database (mariadb). Также как в предыдущих ДЗ.
+2. На эту же виртуальную машину устанавливаю filebeat и metricbeat в качестве docker контейнеров поскольку у yаndex (https://mirror.yandex.ru/mirrors/elastic/) не нашел elastic  репозитария для rpm based систем, а репозитарии самого elastic из России закрыты. 
+* Файл [docker-compose.yml](/ELK1/docker-compose.yml)
+* Файл [filebeat.yml](/ELK1/filebeat.yml)
+* Файл [metricbeat.yml](/ELK1/metricbeat.yml)
+3. На второй VM (Ubuntu) установливаю Elasticsearch и kibana из yаndex репозитория, а также heartbeat 
+```
+echo "deb [trusted=yes] https://mirror.yandex.ru/mirrors/elastic/8/ stable main" | sudo tee /etc/apt/sources.list.d/elastic-8.x.list
+apt update -y
+apt -y install elasticsearch
+sed -i 's/xpack.security.enabled: true/xpack.security.enabled: false/g' /etc/elasticsearch/elasticsearch.yml
+systemctl enable elasticsearch.service --now
+apt -y install kibana
+export TOKEN=$(/usr/share/elasticsearch/bin/elasticsearch-create-enrollment-token -s kibana)
+echo server.host: \"0.0.0.0\" >> /etc/kibana/kibana.yml
+echo elasticsearch.serviceAccountToken: \"$TOKEN\" >> /etc/kibana/kibana.yml
+echo elasticsearch.hosts: [\"http://localhost:9200\"] >> /etc/kibana/kibana.yml
+systemctl enable kibana --now
+apt -y install heartbeat-elastic
+### Изменяю /etc/heartbeat/heartbeat.yml
+systemctl enable heartbeat-elastic --now
+```
+Файл [heartbeat.yml](/ELK1/heartbeat.yml)
+
+**Скриншоты полученных данных отображенные в Kibana.**
+
+* filebeat
+![Filebeat](/ELK1/ELK1-filebeat.png "Filebeat.")
+
+* metricbeat
+![Metricbeat](/ELK1/ELK1-metricbeat.png "Metricbeat.")
+
+* heartbeat
+![Heartbeat](/ELK1/ELK1-heartbeat.png "Heartbeat.")
