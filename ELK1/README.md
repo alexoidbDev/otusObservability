@@ -34,7 +34,7 @@ Heartbeat должен проверять доступность следующ�
 * Файл [docker-compose.yml](/ELK1/docker-compose.yml)
 * Файл [filebeat.yml](/ELK1/filebeat.yml)
 * Файл [metricbeat.yml](/ELK1/metricbeat.yml)
-3. На второй VM (Ubuntu) установливаю Elasticsearch и kibana из yаndex репозитория, а также heartbeat 
+3. На второй VM (Ubuntu) установливаю из yаndex репозитория Elasticsearch и kibana, а также heartbeat.
 ```
 echo "deb [trusted=yes] https://mirror.yandex.ru/mirrors/elastic/8/ stable main" | sudo tee /etc/apt/sources.list.d/elastic-8.x.list
 apt update -y
@@ -56,10 +56,10 @@ systemctl enable heartbeat-elastic --now
 **Скриншоты полученных данных отображенные в Kibana.**
 
 * filebeat
-![Filebeat](/ELK1/ELK1-filebeat.png "Filebeat.")
+![Filebeat](/ELK1/ELK1-filebeat.PNG "Filebeat.")
 
 * metricbeat
-![Metricbeat](/ELK1/ELK1-metricbeat.png "Metricbeat.")
+![Metricbeat](/ELK1/ELK1-heartbeat.PNG "Metricbeat.")
 
 * heartbeat
-![Heartbeat](/ELK1/ELK1-heartbeat.png "Heartbeat.")
+![Heartbeat](/ELK1/ELK1-metricbeat.PNG "Heartbeat.")
