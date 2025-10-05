@@ -1,0 +1,32 @@
+filebeat.modules:
+- module: mysql
+  error:
+    enabled: true
+    var.paths: ["/var/log/hostlog/mariadb/mariadb.log"]
+  slowlog:
+    enabled: true
+    var.paths: ["/var/log/hostlog/mariadb/*slow.log*"]    
+
+filebeat.inputs:
+- type: log
+  id: php-fm
+  enabled: true
+  paths:
+    - /var/log/hostlog/php-fm/*.log
+- type: filestream
+  id: nginx-access-id
+  tags:
+    - nginx
+    - nginx-access
+  paths: ["/var/log/hostlog/nginx/access.log*"]
+- type: filestream
+  id: nginx-error-id
+  tags:
+    - nginx
+    - nginx-error
+  paths: ["/var/log/hostlog/nginx/error.log*"]
+   
+
+
+output.logstash:
+  hosts: ${LOGSTASH_HOSTS}

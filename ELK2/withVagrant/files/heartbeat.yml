@@ -1,0 +1,33 @@
+heartbeat.config.monitors:
+  path: ${path.config}/monitors.d/*.yml
+  reload.enabled: true
+  reload.period: 5s
+heartbeat.monitors:
+- type: http
+  schedule: '@every 5s'
+  urls: ["http://mysite.local"]
+  id: mysite-http-service
+  name: My Site HTTP Service
+- type: tcp
+  schedule: '@every 5s'
+  hosts: ["mysite.local:3306"]
+  id: mysite-mysql
+  name: Mysite MySQL Service
+- type: icmp
+  schedule: '@every 5s'
+  hosts: ["mysite.local"]
+  id: mysite-icmp-service
+  name: Mysite ICMP Service
+  ipv4: true
+  ipv6: true
+  mode: any
+  timeout: 16s
+  wait: 1s
+setup.template.settings:
+  index.number_of_shards: 1
+  index.codec: best_compression
+output.elasticsearch:
+  hosts: ["localhost:9200"]
+  preset: balanced
+processors:
+  - add_observer_metadata:

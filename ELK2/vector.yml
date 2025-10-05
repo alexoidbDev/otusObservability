@@ -1,0 +1,42 @@
+data_dir: "/var/lib/vector"
+
+sources:
+  nginx_source_logs:
+    type: file
+    include:
+      - /var/log/nginx/*.log
+  mysql_source_logs:
+    type: file
+    include:
+      - /var/log/mariadb/*.log
+  php-fm-source_logs:
+    type: file
+    include:
+      - /var/log/php-fm/*.log
+
+transforms:
+  nginx_parse:
+    type: remap
+    inputs:
+      - nginx_source_logs
+    source: |
+      . = parse_nginx_log!(.message, "combined")      
+
+sinks:
+  es_nginx:
+    inputs:
+      - nginx_parse
+    type: elasticsearch
+    endpoints:
+      - http://192.168.250.22:9200
+    bulk:
+      index: "vector-nginx-%Y-%m-%d"
+  es_rest:
+    inputs:
+      - mysql_source_logs
+      - php-fm-source_logs
+    type: elasticsearch
+    endpoints:
+      - http://192.168.250.22:9200
+    bulk:
+      index: "vector-rest-%Y-%m-%d"
