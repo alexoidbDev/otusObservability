@@ -1,0 +1,64 @@
+version: '3'
+
+services:
+  opensearch:
+    image: opensearchproject/opensearch:2.3.0
+    container_name: opensearch
+    # sysctls:
+    #   vm.max_map_count: 262144
+    environment:
+      - cluster.name=opensearch-cluster
+      - node.name=opensearch
+      - cluster.initial_cluster_manager_nodes=opensearch
+      - bootstrap.memory_lock=true
+      # - "OPENSEARCH_JAVA_OPTS=-Xms1g -Xmx1g"
+      - "OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1 
+        hard: -1
+      nofile:
+        soft: 65536 
+        hard: 65536
+    volumes:
+      - opensearch-data:/usr/share/opensearch/data 
+    ports:
+      - 9200:9200
+      - 9600:9600
+    networks:
+      - opensearch-net
+
+  opensearch-dashboards:
+    image: opensearchproject/opensearch-dashboards:2.3.0 
+    container_name: opensearch-dashboards
+    depends_on:
+      - opensearch
+    ports:
+      - 5601:5601
+    expose:
+      - "5601"
+    environment:
+      OPENSEARCH_HOSTS: '["https://opensearch:9200"]'
+    # extra_hosts:
+    #   - "opensearch.local:192.168.250.22"
+    networks:
+      - opensearch-net
+
+  data-prepper:
+    container_name: data-prepper
+    image: opensearchproject/data-prepper:2.0.1
+    depends_on:
+      - opensearch
+    volumes:
+      - ./log_pipeline.yaml:/usr/share/data-prepper/pipelines/log_pipeline.yaml
+    ports:
+      - 2021:2021
+    networks:
+      - opensearch-net
+
+networks:
+  opensearch-net:
+
+volumes:
+  opensearch-data:
+ 

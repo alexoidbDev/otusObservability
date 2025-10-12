@@ -1,0 +1,8 @@
+cluster.name: ocluster1
+network.host: 0.0.0.0
+http.port: 9200
+plugins.security.disabled: true
+node.name: ${HOSTNAME}
+discovery.type: single-node
+path.data: /var/lib/opensearch
+path.logs: /var/log/opensearch

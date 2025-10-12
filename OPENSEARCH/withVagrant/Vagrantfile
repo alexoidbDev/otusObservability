@@ -1,0 +1,28 @@
+ENV['VAGRANT_SERVER_URL'] = 'http://vagrant.elab.pro'
+
+Vagrant.configure("2") do |config|
+    config.vm.synced_folder ".", "/vagrant", disabled: true
+    config.vm.synced_folder "files", "/opt/files"
+    # worspress VM
+    config.vm.define "wp" do |box|
+      box.vm.box = "almalinux/9"
+      box.vm.provision "init", type: "shell", path: "provision/wp.sh"
+      box.vm.host_name = "wp"
+      box.vm.network "private_network", ip: "192.168.250.21"
+      box.vm.provider "virtualbox" do |v|
+        v.memory = 2048
+        v.cpus = 2
+      end
+    end
+    # prometheous VM
+    config.vm.define "os" do |box|
+      box.vm.box = "ubuntu/jammy64"
+      box.vm.host_name = "os"
+      box.vm.provision "init", type: "shell", path: "provision/os.sh"
+      box.vm.network "private_network", ip: "192.168.250.22"
+      box.vm.provider "virtualbox" do |v|
+        v.memory = 4096
+        v.cpus = 2
+      end
+    end
+end
