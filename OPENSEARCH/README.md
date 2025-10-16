@@ -47,12 +47,12 @@ Cообщения сохраняются в базу Opensearch и могут б
 
  * Логи nginx
 
-   ![Nginx](/OPENSEARCH/nginx.png "Nginx.")
+   ![Nginx](/OPENSEARCH/nginx.PNG "Nginx.")
 
  * Логи php-fpm
 
-   ![php-fpm](/OPENSEARCH/php-fpm.png "Php-fpm.")
+   ![php-fpm](/OPENSEARCH/php-fpm.PNG "Php-fpm.")
 
  * Логи mariadb
 
-    ![Mariadb](/OPENSEARCH/php-fpm.png "Mariadb.")
+    ![Mariadb](/OPENSEARCH/php-fpm.PNG "Mariadb.")
