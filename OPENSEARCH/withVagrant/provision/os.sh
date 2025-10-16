@@ -1,8 +1,8 @@
 #!/bin/bash
 sudo -i
 
-# cp /opt/files/checkcert.cer /usr/local/share/ca-certificates/checkcert.crt
-# update-ca-certificates
+cp /opt/files/checkcert.cer /usr/local/share/ca-certificates/checkcert.crt
+update-ca-certificates
 
 # cp /opt/files/prom-services/* /etc/systemd/system/
 
@@ -28,6 +28,8 @@ cp -f /opt/files/log_pipeline.yaml ./
 echo vm.max_map_count = 262144 > /etc/sysctl.d/99-max_map.conf
 sysctl -p /etc/sysctl.d/99-max_map.conf
 
+# mkdir -p ./prepperlogs
+# chmod 777 ./prepperlogs
 docker compose up -d
 
 #sysctl vm.max_map_count=262144

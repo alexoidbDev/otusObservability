@@ -36,3 +36,23 @@ Cообщения сохраняются в базу Opensearch и могут б
 - Работа с datapreper
 
 ## Решение
+
+На стенде из занятий по Elasticstack:
+
+1. Заменил filebeat на fluentbeat. Файл конфигурации [fluent-beat.conf](/OPENSEARCH/fluent-bit.conf).
+2. Заменил logstash на datapreper. Настроил отправку в fluentbeat на datapreper. С datapreper логи отправляются на opensearch. Файл конфигурации пайплайна [log_pipeline.yaml](/OPENSEARCH/log_pipeline.yaml). 
+3. Заменил Elasticsearch и Kibana на Opensearch и Opensearch Dashboard.
+
+**Скриншоты из Opensearch Dashbord:**
+
+ * Логи nginx
+
+   ![Nginx](/OPENSEARCH/nginx.png "Nginx.")
+
+ * Логи php-fpm
+
+   ![php-fpm](/OPENSEARCH/php-fpm.png "Php-fpm.")
+
+ * Логи mariadb
+
+    ![Mariadb](/OPENSEARCH/php-fpm.png "Mariadb.")

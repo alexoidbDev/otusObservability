@@ -37,6 +37,6 @@ cp -f /opt/files/fluent-bit.conf /etc/fluent-bit/
 cat /opt/files/parsers.conf  >> /etc/fluent-bit/parsers.conf
 
 systemctl daemon-reload
-# systemctl enable --now fluent-bit
+systemctl enable --now fluent-bit
 
 

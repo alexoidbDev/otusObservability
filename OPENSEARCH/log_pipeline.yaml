@@ -15,10 +15,6 @@ log-pipeline:
     - php-fpm-logs: '/type == "php-fpm"'
   
   sink:
-    # - stdout:
-    #     # routes: [nginx-logs]
-    # - file:
-    #     path: /var/log/prepperlogs/prepper.out
     - opensearch:
         hosts: ["https://opensearch:9200"]
         insecure: true

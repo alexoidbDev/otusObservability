@@ -2,7 +2,7 @@ version: '3'
 
 services:
   opensearch:
-    image: opensearchproject/opensearch:2.3.0
+    image: opensearchproject/opensearch:2.19.3
     container_name: opensearch
     # sysctls:
     #   vm.max_map_count: 262144
@@ -11,6 +11,7 @@ services:
       - node.name=opensearch
       - cluster.initial_cluster_manager_nodes=opensearch
       - bootstrap.memory_lock=true
+      - OPENSEARCH_INITIAL_ADMIN_PASSWORD=Str0ngPaSS911
       # - "OPENSEARCH_JAVA_OPTS=-Xms1g -Xmx1g"
       - "OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m"
     ulimits:
@@ -29,7 +30,7 @@ services:
       - opensearch-net
 
   opensearch-dashboards:
-    image: opensearchproject/opensearch-dashboards:2.3.0 
+    image: opensearchproject/opensearch-dashboards:2.19.3 
     container_name: opensearch-dashboards
     depends_on:
       - opensearch
@@ -46,7 +47,7 @@ services:
 
   data-prepper:
     container_name: data-prepper
-    image: opensearchproject/data-prepper:2.0.1
+    image: opensearchproject/data-prepper:latest
     depends_on:
       - opensearch
     volumes:
