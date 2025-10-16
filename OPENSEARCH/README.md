@@ -55,4 +55,4 @@ Cообщения сохраняются в базу Opensearch и могут б
 
  * Логи mariadb
 
-    ![Mariadb](/OPENSEARCH/php-fpm.PNG "Mariadb.")
+    ![Mariadb](/OPENSEARCH/mariadb.PNG "Mariadb.")
