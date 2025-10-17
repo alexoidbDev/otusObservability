@@ -1,0 +1,48 @@
+log-pipeline:
+  source:
+    http:
+      ssl: false
+
+  processor:
+    - grok:
+        match:
+          log: ['\[(%{MONTHDAY}-%{MONTH}-%{YEAR} %{TIME})\] %{LOGLEVEL:level}: %{GREEDYDATA:message}']
+        grok_when: '/type == "php-fpm"'
+  
+  route:
+    - nginx-logs: '/type == "nginx"'
+    - mysql-logs: '/type == "mysql"'
+    - php-fpm-logs: '/type == "php-fpm"'
+  
+  sink:
+    # - stdout:
+    #     # routes: [nginx-logs]
+    # - file:
+    #     path: /var/log/prepperlogs/prepper.out
+    - opensearch:
+        hosts: ["https://opensearch:9200"]
+        insecure: true
+        username: admin
+        password: Str0ngPaSS911
+        index: nginx_logs
+        routes: [nginx-logs]
+    - opensearch:
+        hosts: ["https://opensearch:9200"]
+        insecure: true
+        username: admin
+        password: Str0ngPaSS911
+        index: mysql_logs
+        routes: [mysql-logs]
+    - opensearch:
+        hosts: ["https://opensearch:9200"]
+        insecure: true
+        username: admin
+        password: Str0ngPaSS911
+        routes: ["php-fpm-logs"]
+        index: php-fpm_logs
+    - opensearch:
+        hosts: ["https://opensearch:9200"]
+        insecure: true
+        username: admin
+        password: Str0ngPaSS911
+        index: rest_logs

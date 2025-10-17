@@ -1,3 +1,5 @@
 .vagrant
 checkcert.cer
 checkcert.crt
+*.rpm
+filebeat*.tar.gz

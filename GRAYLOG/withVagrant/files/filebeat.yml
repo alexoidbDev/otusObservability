@@ -1,0 +1,42 @@
+# Required settings
+fields_under_root: true
+fields.collector_node_id: ${sidecar.nodeName}
+fields.gl2_source_collector: ${sidecar.nodeId}
+
+
+output.logstash:
+   hosts: ["${user.graylog_host}:5044"]
+path:
+   data: ${sidecar.spoolDir!"/var/lib/graylog-sidecar/collectors/filebeat"}/data
+   logs: ${sidecar.spoolDir!"/var/lib/graylog-sidecar/collectors/filebeat"}/log
+
+output.file:
+  enabled: true
+  path: "/tmp"  # Directory where output files will be stored
+  filename: "filebeat_output.log" # Base name for the output file
+  rotate_every_kb: 10240 # Rotate the file when it reaches 10MB
+  number_of_files: 7 # Keep up to 7 rotated files
+
+filebeat.modules:
+- module: nginx
+  access:
+    enabled: true
+    var.paths: ["/var/log/nginx/*access.log*"]
+  error:
+    enabled: true
+    var.paths: ["/var/log/nginx/*error.log*"]
+- module: mysql
+  error:
+    enabled: true
+    var.paths: ["/var/log/mariadb/mariadb.log"]
+  slowlog:
+    enabled: true
+    var.paths: ["/var/log/mariadb/*slow.log*"]    
+
+
+filebeat.inputs:
+- type: log
+  id: php-fpm
+  enabled: true
+  paths:
+    - /var/log/php-fpm/*.log
