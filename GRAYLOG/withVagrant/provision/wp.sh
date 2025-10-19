@@ -14,6 +14,7 @@ systemctl enable php-fpm --now
 systemctl enable mariadb --now
 
 echo 127.0.0.1  mysite.local www.mysite.local wordpress >> /etc/hosts
+echo 192.168.250.22  graylog.local graylog >> /etc/hosts
 
 
 cp /opt/files/mysite.local.conf /etc/nginx/conf.d/
@@ -32,10 +33,13 @@ systemctl reload nginx
 rpm -Uvh https://packages.graylog2.org/repo/packages/graylog-sidecar-repository-1-5.noarch.rpm
 dnf -y install graylog-sidecar
 
-curl --insecure -L -O https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-9.1.5-x86_64.rpm
+cp /opt/files/fluent-bit.repo /etc/yum.repos.d/
+dnf -y install fluent-bit
+
+#curl --insecure -L -O https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-9.1.5-x86_64.rpm
 # unalias cp
 # cp -f /opt/files/filebeat-9.1.5-x86_64.rpm ./
-rpm -vi filebeat-9.1.5-x86_64.rpm
+#   
 
 # cp -f /opt/files/filebeat-9.1.5-linux-x86_64.tar.gz ./
 # tar zxvf filebeat-9.1.5-linux-x86_64.tar.gz
@@ -43,10 +47,10 @@ rpm -vi filebeat-9.1.5-x86_64.rpm
 # cp filebeat-9.1.5-linux-x86_64/filebeat /opt/filebeat
 # ln -s /usr/bin/filebeat /opt/filebeat/filebeat
 
-cp -f /opt/files/sidecar.yml ./
+cp -f /opt/files/sidecar.yml /etc/graylog/sidecar/
 # vi /etc/graylog/sidecar/sidecar.yml
-# graylog-sidecar -service install
-# systemctl enable --now graylog-sidecar
+graylog-sidecar -service install
+systemctl enable --now graylog-sidecar
 # 1vp09ctekfdkjqfcsv6r2ot5kjk39t28kcfhmghasuej5i3v9f8o
 
 systemctl daemon-reload

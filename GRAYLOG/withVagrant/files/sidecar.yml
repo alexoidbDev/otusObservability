@@ -1,9 +1,10 @@
-collectors:
-  - id: filebeat
-    service_type: filebeat
-    executable_path: /usr/bin/filebeat
+# collectors:
+#   - id: filebeat
+#     service_type: filebeat
+#     executable_path: /usr/bin/filebeat
 
 collector_binaries_accesslist:
+  - "/usr/bin/fluent-bit"
   - "/usr/bin/filebeat"
   - "/usr/lib/graylog-sidecar/filebeat"
   - "/usr/share/filebeat/bin/filebeat"
@@ -81,8 +82,8 @@ node_name: "wp"
 # A list of tags to assign to this sidecar. Collector configuration matching any of these tags will automatically be
 # applied to the sidecar.
 tags:
-  - default
   - wp
+  # - default
 
 # A list of binaries which are allowed to be executed by the Sidecar. An empty list disables the access list feature.
 # Wildcards can be used, for a full pattern description see https://golang.org/pkg/path/filepath/#Match

@@ -1,8 +1,8 @@
 #!/bin/bash
 sudo -i
 
-cp /opt/files/checkcert.cer /usr/local/share/ca-certificates/checkcert.crt
-update-ca-certificates
+# cp /opt/files/checkcert.cer /usr/local/share/ca-certificates/checkcert.crt
+# update-ca-certificates
 
 # cp /opt/files/prom-services/* /etc/systemd/system/
 
@@ -25,34 +25,14 @@ systemctl enable --now docker
 
 unalias cp
 cp -f /opt/files/docker-compose.yml ./docker-compose.yml
+cp -f /opt/files/log_pipeline.yaml ./
 
 echo "vm.max_map_count=262144" | sudo tee -a /etc/sysctl.conf
 sysctl -p
 
-echo GRAYLOG_PASSWORD_SECRET=$(pwgen -N 1 -s 96) > ./.env
+# echo GRAYLOG_PASSWORD_SECRET=$(pwgen -N 1 -s 96) > ./.env
+echo GRAYLOG_PASSWORD_SECRET=PaSSw0rdPaSSw0rd > ./.env
 echo GRAYLOG_ROOT_PASSWORD_SHA2=$(echo -n PaSSw0rd | shasum -a 256 | awk '{print $1}') >> ./.env
 #ojWKoeDJAY
 
 docker compose up -d
-
-#sysctl vm.max_map_count=262144
-# apt -y install curl lsb-release gnupg2 ca-certificates
-# curl -fsSL https://artifacts.opensearch.org/publickeys/opensearch.pgp| gpg --dearmor -o /etc/apt/trusted.gpg.d/opensearch.gpg
-# echo "deb https://artifacts.opensearch.org/releases/bundle/opensearch/2.x/apt stable main" | tee /etc/apt/sources.list.d/opensearch-2.x.list
-# echo "deb https://artifacts.opensearch.org/releases/bundle/opensearch-dashboards/2.x/apt stable main" | tee -a /etc/apt/sources.list.d/opensearch-2.x.list
-
-
-
-# apt update -y
-# apt -y install opensearch opensearch-dashboards
-# unalias cp
-# cp -f /opt/files/opensearch.yml /etc/opensearch/opensearch.yml
-# chown -R opensearch:opensearch /var/log/opensearch/
-# chown -R opensearch:opensearch /var/lib/opensearch/
-# chown -R opensearch:opensearch /etc/opensearch/
-# cp -f /opt/files/opensearch_dashboards.yml /etc/opensearch-dashboards/opensearch_dashboards.yml
-
-# # sed -i 's/xpack.security.enabled: true/xpack.security.enabled: false/g' /etc/elasticsearch/elasticsearch.yml
-
-# systemctl enable --now opensearch
-# systemctl enable --now opensearch-dashboards
