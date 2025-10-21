@@ -107,7 +107,7 @@
     Format json
 ```
   
-  На ВМ c sidecar редактирую конфигурациию [sidecar.yml](/GRAYLOG/sidecar copy.yml) и запускаю sidecar.
+  На ВМ c sidecar редактирую конфигурациию [sidecar.yml](/GRAYLOG/sidecar.yml) и запускаю sidecar.
 
 ```
 graylog-sidecar -service install
