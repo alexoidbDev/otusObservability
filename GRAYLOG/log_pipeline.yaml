@@ -1,0 +1,20 @@
+log-pipeline:
+  source:
+    http:
+      ssl: false
+
+  processor:
+    - grok:
+        match:
+          log: ['%{COMBINEDAPACHELOG}']
+        grok_when: '/type == "nginx"'
+    - grok:
+        match:
+          log: ['\[(%{MONTHDAY}-%{MONTH}-%{YEAR} %{TIME})\] %{LOGLEVEL:level}: %{GREEDYDATA:message}']
+        grok_when: '/type == "php-fpm"'
+  
+  sink:
+    - stdout:
+    # - file:
+    #     path: /tmp/sink/dp-sink.log
+    #     # routes: [nginx-logs]

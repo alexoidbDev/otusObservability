@@ -34,7 +34,7 @@ rpm -Uvh https://packages.graylog2.org/repo/packages/graylog-sidecar-repository-
 dnf -y install graylog-sidecar
 
 cp /opt/files/fluent-bit.repo /etc/yum.repos.d/
-dnf -y install fluent-bit
+#dnf -y install fluent-bit
 
 #curl --insecure -L -O https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-9.1.5-x86_64.rpm
 # unalias cp
@@ -49,11 +49,10 @@ dnf -y install fluent-bit
 
 cp -f /opt/files/sidecar.yml /etc/graylog/sidecar/
 # vi /etc/graylog/sidecar/sidecar.yml
-graylog-sidecar -service install
-systemctl enable --now graylog-sidecar
-# 1vp09ctekfdkjqfcsv6r2ot5kjk39t28kcfhmghasuej5i3v9f8o
+#graylog-sidecar -service install
+#systemctl enable --now graylog-sidecar
 
-systemctl daemon-reload
+#systemctl daemon-reload
 
 
 

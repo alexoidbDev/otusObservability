@@ -20,6 +20,8 @@ log-pipeline:
   
   sink:
     - stdout:
+    # - file:
+    #     path: /tmp/sink/dp-sink.log
     #     # routes: [nginx-logs]
     # - file:
     #     path: /var/log/prepperlogs/prepper.out

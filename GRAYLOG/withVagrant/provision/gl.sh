@@ -1,10 +1,8 @@
 #!/bin/bash
 sudo -i
 
-# cp /opt/files/checkcert.cer /usr/local/share/ca-certificates/checkcert.crt
-# update-ca-certificates
-
-# cp /opt/files/prom-services/* /etc/systemd/system/
+cp /opt/files/checkcert.cer /usr/local/share/ca-certificates/checkcert.crt
+update-ca-certificates
 
 echo 192.168.250.21 mysite.local www.mysite.local wordpress >> /etc/hosts
 
@@ -30,9 +28,11 @@ cp -f /opt/files/log_pipeline.yaml ./
 echo "vm.max_map_count=262144" | sudo tee -a /etc/sysctl.conf
 sysctl -p
 
-# echo GRAYLOG_PASSWORD_SECRET=$(pwgen -N 1 -s 96) > ./.env
-echo GRAYLOG_PASSWORD_SECRET=PaSSw0rdPaSSw0rd > ./.env
+echo GRAYLOG_PASSWORD_SECRET=$(pwgen -N 1 -s 96) > ./.env
+# echo GRAYLOG_PASSWORD_SECRET=PaSSw0rdPaSSw0rd > ./.env
 echo GRAYLOG_ROOT_PASSWORD_SHA2=$(echo -n PaSSw0rd | shasum -a 256 | awk '{print $1}') >> ./.env
 #ojWKoeDJAY
+mkdir ./dp-sink ; chmod 777 $_
+
 
 docker compose up -d
