@@ -48,9 +48,9 @@
   - Файл [docker-compose.yml](/GRAYLOG/docker-compose.yml).
   - Файл настроек pipeline для data-preper'а [log_pipeline.yaml.yml](/GRAYLOG/log_pipeline.yaml).
 
-  После установки Graylog'е создаю input - GELF TCP
+  После установки Graylog'е создаю input - GELF UDP
 
-  ![gelf-tcp](/GRAYLOG/gelf-tcp.PNG "gelf-tcp.")
+  ![gelf-udp](/GRAYLOG/gelf-udp.PNG "gelf-udp.")
 
 4. В Graylog для подключения sidecar делаю следующее:
   - генерирую токен
