@@ -1,0 +1,167 @@
+services:
+  mongo1:
+    image: mongo:6.0.18
+    container_name: mongo1
+    ports:
+      - "27017:27017"
+    extra_hosts:
+      - "database:192.168.250.21"
+      - "storage:192.168.250.22"
+    volumes:
+      - mongo1_data:/data/db
+    command: mongod --replSet rs0 --bind_ip 0.0.0.0
+    logging:
+      driver: loki
+      options:
+        loki-url: "http://monitor:3100/loki/api/v1/push"
+        loki-tenant-id: 1
+        loki-relabel-config: |
+          - action: labeldrop
+            regex: compose_project
+          - action: labeldrop
+            regex: filename
+    # logging:
+    #   driver: json-file # Ensure Docker uses json-file logging driver
+    #   options:
+    #     tag: "{{.ImageName}}/{{.Name}}/{{.ID}}" 
+    restart: unless-stopped
+    networks:
+      - mongo-net
+
+  mongo2:
+    image: mongo:6.0.18
+    container_name: mongo2
+    ports:
+      - "27018:27017"
+    extra_hosts:
+      - "database:192.168.250.21"
+      - "storage:192.168.250.22"
+      - "monitor:192.168.250.22"
+    volumes:
+      - mongo2_data:/data/db
+    command: mongod --replSet rs0 --bind_ip 0.0.0.0
+    logging:
+      driver: loki
+      options:
+        loki-url: "http://monitor:3100/loki/api/v1/push"
+        loki-tenant-id: 1
+        loki-relabel-config: |
+          - action: labeldrop
+            regex: compose_project
+          - action: labeldrop
+            regex: filename
+        # loki-batch-size: "400"
+        # loki-batch-wait: "1s"
+    # logging:
+    #   driver: json-file # Ensure Docker uses json-file logging driver
+    #   options:
+    #     tag: "{{.ImageName}}/{{.Name}}/{{.ID}}" 
+    restart: unless-stopped
+    networks:
+      - mongo-net
+
+  mongo3:
+    image: mongo:6.0.18
+    container_name: mongo3
+    ports:
+      - "27019:27017"
+    extra_hosts:
+      - "database:192.168.250.21"
+      - "storage:192.168.250.22"
+    volumes:
+      - mongo3_data:/data/db
+    command: mongod --replSet rs0 --bind_ip 0.0.0.0
+    logging:
+      driver: loki
+      options:
+        loki-url: "http://monitor:3100/loki/api/v1/push"
+        loki-tenant-id: 1
+        loki-relabel-config: |
+          - action: labeldrop
+            regex: compose_project
+          - action: labeldrop
+            regex: filename
+    # logging:
+    #   driver: json-file # Ensure Docker uses json-file logging driver
+    #   options:
+    #     tag: "{{.ImageName}}/{{.Name}}/{{.ID}}" 
+    restart: unless-stopped
+    networks:
+      - mongo-net
+
+  mongo-express:
+    image: mongo-express:latest
+    container_name: mongo-express
+    environment:
+      ME_CONFIG_MONGODB_URL: mongodb://database:27017,database:27018,database:27019/rocketchat?replicaSet=rs0
+      ME_CONFIG_BASICAUTH_USERNAME: admin
+      ME_CONFIG_BASICAUTH_PASSWORD: password
+    ports:
+      - "8081:8081"
+    extra_hosts:
+      - "database:192.168.250.21"
+      - "storage:192.168.250.22"
+    depends_on:
+      - mongo1
+      - mongo2
+      - mongo3
+    networks:
+      - mongo-net
+
+  mongodb-exporter:
+    container_name: mongodb-exporter
+    image: percona/mongodb_exporter:0.47
+    depends_on:
+      - mongo1
+      - mongo2
+      - mongo3
+    extra_hosts:
+      - "database:192.168.250.21"
+      - "storage:192.168.250.22"
+    ports:
+      - "9216:9216"
+    environment:
+      - "MONGODB_URI=mongodb://database:27017/admin,mongodb://database:27018/admin,mongodb://database:27019/admin"
+      # - MONGODB_USER=admin
+      # - MONGODB_PASSWORD=admin
+    restart: unless-stopped
+    networks:
+      - mongo-net
+
+  # promtail:
+  #   container_name: promtail
+  #   image: grafana/promtail:latest
+  #   extra_hosts:
+  #     - "monitor:192.168.250.30"
+  #   volumes:
+  #     - /var/lib/docker/containers:/var/lib/docker/containers:ro
+  #     - /var/run/docker.sock:/var/run/docker.sock
+  #     - /opt/conf/promtail-mongo.yaml:/etc/promtail/promtail-config.yaml
+  #   command: -config.file=/etc/promtail/promtail-config.yaml
+  #   depends_on:
+  #     - mongo1
+  #     - mongo2
+  #     - mongo3
+  #   restart: unless-stopped
+  #   networks:
+  #     - mongo-net
+
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: node-exporter
+    volumes:
+      - '/:/rootfs:ro,rslave'
+    command:
+      - '--path.rootfs=/rootfs'
+    network_mode: host
+    pid: host
+    restart: unless-stopped
+
+volumes:
+  mongo1_data:
+  mongo2_data:
+  mongo3_data:
+
+networks:
+  mongo-net:
+    driver: bridge

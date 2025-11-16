@@ -1,0 +1,54 @@
+services:
+  rocketchat:
+    #image: registry.rocket.chat/rocketchat/rocket.chat:${RELEASE:-latest}
+    image: rocket.chat:6.9.5
+    container_name: rocketchat
+    restart: always
+    # healthcheck:
+    #   test: [ "CMD", "curl", "-f", "http://localhost:3000/health" ]
+    #   interval: 60s
+    #   timeout: 30s
+    #   retries: 5
+    expose:
+      - ${PORT}
+    ports:
+      - "${HOST_PORT}:${PORT}"
+    extra_hosts:
+      - "database:192.168.250.21"
+      - "storage:192.168.250.22"
+      - "app-node-1:192.168.250.11"
+      - "app-node-2:192.168.250.12"
+      - "app-node-3:192.168.250.13"
+    environment:
+      - MONGO_URL
+      - MONGO_OPLOG_URL
+      - ROOT_URL
+      - PORT
+      - TCP_PORT
+      - INSTANCE_IP
+      - DEPLOY_METHOD=docker
+      - ADMIN_USERNAME
+      - ADMIN_NAME
+      - ADMIN_EMAIL
+      - ADMIN_PASS
+    logging:
+      driver: loki
+      options:
+        loki-url: "http://monitor:3100/loki/api/v1/push"
+        loki-tenant-id: 1
+        loki-relabel-config: |
+          - action: labeldrop
+            regex: compose_project
+          - action: labeldrop
+            regex: filename
+
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: node-exporter
+    volumes:
+      - '/:/rootfs:ro,rslave'
+    command:
+      - '--path.rootfs=/rootfs'
+    network_mode: host
+    pid: host
+    restart: unless-stopped

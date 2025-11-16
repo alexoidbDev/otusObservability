@@ -1,0 +1,43 @@
+services:
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+      - "9113:9113"
+    volumes:
+      - /opt/conf/nginx-lb.conf:/etc/nginx/nginx.conf
+      - balancer_logs:/var/log/nginx/
+  nginx-exporter:
+    image: nginx/nginx-prometheus-exporter:latest
+    container_name: nginx-exporter
+    restart: unless-stopped
+    command:
+      - -nginx.scrape-uri=http://127.0.0.1/stub_status
+    network_mode: "service:nginx"
+    depends_on:
+      - nginx
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: node-exporter
+    restart: unless-stopped
+    volumes:
+      - '/:/rootfs:ro,rslave'
+    command:
+      - '--path.rootfs=/rootfs'
+    network_mode: host
+    pid: host
+  promtail:
+    image: grafana/promtail:latest
+    container_name: promtail
+    restart: unless-stopped
+    volumes:
+      - balancer_logs:/var/log/nginx/
+      - /opt/conf/promtail-lb.yaml:/etc/promtail/config.yaml
+    command: -config.file=/etc/promtail/config.yaml
+    depends_on:
+      - nginx
+
+volumes:
+  balancer_logs:

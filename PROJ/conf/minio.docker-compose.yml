@@ -1,0 +1,84 @@
+version: '3.8'
+
+services:
+  minio:
+    image: minio/minio:latest
+    container_name: minio
+    ports:
+      - "9000:9000"  # MinIO S3 API
+      - "9001:9001"  # MinIO Console
+    extra_hosts:
+      - "database:192.168.250.21"
+      - "storage:192.168.250.22"
+    environment:
+      - MINIO_ROOT_USER
+      - MINIO_ROOT_PASSWORD
+      - MINIO_PROMETHEUS_AUTH_TYPE
+    volumes:
+      - minio_data:/data
+    command: server /data --console-address ":9001"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    logging:
+      driver: loki
+      options:
+        loki-url: "http://monitor:3100/loki/api/v1/push"
+        loki-tenant-id: 1
+        loki-relabel-config: |
+          - action: labeldrop
+            regex: compose_project
+          - action: labeldrop
+            regex: filename
+
+  minio-setup:
+    image: minio/mc
+    depends_on:
+      minio:
+        condition: service_healthy
+    extra_hosts:
+      - "storage:192.168.250.22"
+    environment:
+      - MINIO_ROOT_USER
+      - MINIO_ROOT_PASSWORD
+    entrypoint: >
+      /bin/sh -c "
+      sleep 10;
+      echo MINIO_ROOT_USER $MINIO_ROOT_USER;
+      echo MINIO_ROOT_PASSWORD $MINIO_ROOT_PASSWORD;
+      # mc alias set myminio http://minio:9000 $MINIO_ROOT_USER $MINIO_ROOT_PASSWORD;
+      mc alias set storage http://storage:9000 $MINIO_ROOT_USER $MINIO_ROOT_PASSWORD;
+      mc mb rocket-chat-files --ignore-existing;
+      # mc mb storage/rocket-chat-files --ignore-existing;
+      exit 0;
+      "
+
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: node-exporter
+    volumes:
+      - '/:/rootfs:ro,rslave'
+    command:
+      - '--path.rootfs=/rootfs'
+    network_mode: host
+    pid: host
+    restart: unless-stopped
+
+  # promtail:
+  #   container_name: promtail
+  #   image: grafana/promtail:latest
+  #   extra_hosts:
+  #     - "monitor:192.168.250.30"
+  #   volumes:
+  #     - /var/lib/docker/containers:/var/lib/docker/containers:ro
+  #     - /opt/conf/promtail-minio.yaml:/etc/promtail/promtail-config.yaml
+  #   command: -config.file=/etc/promtail/promtail-config.yaml
+  #   depends_on:
+  #     minio:
+  #   restart: unless-stopped
+
+
+volumes:
+  minio_data:

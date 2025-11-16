@@ -1,0 +1,96 @@
+ENV['VAGRANT_SERVER_URL'] = 'https://vagrant.elab.pro'
+Vagrant.configure("2") do |config|
+  # Мапа с настройками CPU и памяти для разных машин
+  # machine_resources = {
+  #   "balancer" => { "cpus" => 1, "memory" => 512 },
+  #   "app-node" => { "cpus" => 1, "memory" => 1024 },
+  #   "database" => { "cpus" => 1, "memory" => 1024 },
+  #   "storage"  => { "cpus" => 2, "memory" => 1024 }
+  # }
+  machine_resources = {
+    "balancer" => { "cpus" => 1, "memory" => 512 },
+    "app-node" => { "cpus" => 1, "memory" => 1024 },
+    "database" => { "cpus" => 2, "memory" => 2048 },
+    "storage"  => { "cpus" => 2, "memory" => 2048 },
+    "monitor"  => { "cpus" => 2, "memory" => 2048 }
+  }
+  
+  config.vm.box = "ubuntu/jammy64"
+  config.vm.synced_folder ".", "/vagrant", disabled: true
+  config.vm.boot_timeout = 600
+  config.vm.box_download_insecure=true
+  config.vm.synced_folder "conf/", "/opt/conf", owner: "vagrant", group: "vagrant"
+  config.vm.provision "init", type: "shell", path: "lib/init.sh"
+
+
+  config.vm.define "balancer" do |config|
+    config.vm.hostname = "balancer"
+    config.vm.network "private_network", ip: "192.168.250.10"
+    config.vm.provision "balancer", type: "shell", path: "lib/balancer.sh"
+
+    config.vm.provider "virtualbox" do |server|
+      server.name = "balancer"
+      server.cpus = machine_resources["balancer"]["cpus"]
+      server.memory = machine_resources["balancer"]["memory"]
+    end
+  end
+
+    
+  # Список узлов с их именами и IP-адресами
+  nodes = {
+    "app-node-1" => "192.168.250.11",
+    "app-node-2" => "192.168.250.12",
+    "app-node-3" => "192.168.250.13"
+  }
+
+  nodes.each do |name, ip|
+    config.vm.define name do |node|
+      node.vm.hostname = name
+      node.vm.network "private_network", ip: ip
+      node.vm.provision "rocketchat", type: "shell", path: "lib/rocketchat.sh"
+
+      node.vm.provider "virtualbox" do |vb|
+        vb.name = name
+        vb.memory = machine_resources["app-node"]["memory"]
+        vb.cpus = machine_resources["app-node"]["cpus"]
+      end
+    end
+  end
+
+  config.vm.define "database" do |config|
+    config.vm.hostname = "database"
+    config.vm.network "private_network", ip: "192.168.250.21"
+    config.vm.provision "mongo", type: "shell", path: "lib/mongo.sh"
+
+    config.vm.provider "virtualbox" do |server|
+      server.name = "database"
+      server.cpus = machine_resources["database"]["cpus"]
+      server.memory = machine_resources["database"]["memory"]
+    end
+  end
+
+  config.vm.define "monitor" do |config|
+    config.vm.hostname = "monitor"
+    config.vm.network "private_network", ip: "192.168.250.30"
+    config.vm.provision "grafana-stack", type: "shell", path: "lib/monitor.sh"
+
+    config.vm.provider "virtualbox" do |server|
+      server.name = "monitor"
+      server.cpus = machine_resources["monitor"]["cpus"]
+      server.memory = machine_resources["monitor"]["memory"]
+    end
+  end
+  
+  config.vm.define "storage" do |config|
+    config.vm.hostname = "storage"
+    config.vm.network "private_network", ip: "192.168.250.22"
+    config.vm.provision "minio", type: "shell", path: "lib/minio.sh"
+
+    config.vm.provider "virtualbox" do |server|
+      server.name = "storage"
+      server.cpus = machine_resources["storage"]["cpus"]
+      server.memory = machine_resources["storage"]["memory"]
+    end
+  end
+  
+end    

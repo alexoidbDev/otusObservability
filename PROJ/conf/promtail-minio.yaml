@@ -1,0 +1,33 @@
+server:
+  http_listen_port: 9080
+  grpc_listen_port: 0
+
+positions:
+  filename: /tmp/positions.yaml
+
+clients:
+  - url: http://monitor:3100/loki/api/v1/push
+
+scrape_configs:
+  - job_name: container_logs
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: containerlogs
+          __path__: /var/lib/docker/containers/*/*log # Path to Docker container logs
+    # pipeline_stages:
+    #   - docker: {} # Parse Docker log format
+    #   - match:
+    #       selector: '{container_name="mongo*"}' # Filter logs from the MongoDB container
+    #       stages:
+    #         - labeldrop:
+    #             - filename
+    #             - stream
+    #             - time
+    #         - json:
+    #             expressions:
+    #               message: log
+    #             drop_field: true
+    #         - labels:
+    #             log_level: level # Extract log level if present in MongoDB logs
