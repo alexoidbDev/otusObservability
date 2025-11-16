@@ -27,6 +27,12 @@ services:
       - TCP_PORT
       - INSTANCE_IP
       - DEPLOY_METHOD=docker
+      - DEPLOY_PLATFORM=compose
+      - REG_TOKEN=${REG_TOKEN:-}
+      # - LICENSE_DEBUG=true
+        # OVERWRITE_SETTING_Prometheus_Enabled: true
+        # OVERWRITE_SETTING_Prometheus_Port: "${METRICS_PORT:-9458}"
+      #  TRANSPORTER: "${NATS_URL-monolith+nats://nats:4222}"
       - ADMIN_USERNAME
       - ADMIN_NAME
       - ADMIN_EMAIL
