@@ -22,6 +22,10 @@ for entry in "${entries[@]}"; do
     fi
 done
 
+if [ -f /opt/conf/checkcert.cer ]; then
+  sudo cp /opt/conf/checkcert.cer /usr/local/share/ca-certificates/checkcert.crt
+  sudo update-ca-certificates
+fi  
 
 sudo apt update && sudo apt install -y net-tools vim htop tree ca-certificates curl
 

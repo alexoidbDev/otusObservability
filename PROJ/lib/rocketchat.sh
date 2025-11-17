@@ -12,4 +12,4 @@ source /opt/conf/rocketchat-env.sh
 ## https://github.com/RocketChat/Docker.Official.Image/blob/master/compose.yml
 docker compose -f /opt/conf/rocketchat.docker-compose.yml up -d
 
-# docker logs -f rocketchat
+docker logs -f rocketchat

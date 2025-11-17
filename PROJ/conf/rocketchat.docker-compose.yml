@@ -1,9 +1,10 @@
 services:
   rocketchat:
-    #image: registry.rocket.chat/rocketchat/rocket.chat:${RELEASE:-latest}
-    image: rocket.chat:6.9.5
+    image: registry.rocket.chat/rocketchat/rocket.chat:${RELEASE:-latest}
+    # image: rocket.chat:6.9.5
+    # image: rocketchat/rocket.chat:6.4.4
     container_name: rocketchat
-    restart: always
+    restart: unless-stopped
     # healthcheck:
     #   test: [ "CMD", "curl", "-f", "http://localhost:3000/health" ]
     #   interval: 60s
@@ -13,12 +14,16 @@ services:
       - ${PORT}
     ports:
       - "${HOST_PORT}:${PORT}"
+      - "${METRICS_PORT:-9458}:${METRICS_PORT:-9458}"
     extra_hosts:
       - "database:192.168.250.21"
       - "storage:192.168.250.22"
       - "app-node-1:192.168.250.11"
       - "app-node-2:192.168.250.12"
       - "app-node-3:192.168.250.13"
+    volumes:
+      - /etc/ssl/certs:/etc/ssl/certs:ro
+      - /usr/local/share/ca-certificates:/usr/local/share/ca-certificates:ro
     environment:
       - MONGO_URL
       - MONGO_OPLOG_URL
@@ -29,9 +34,9 @@ services:
       - DEPLOY_METHOD=docker
       - DEPLOY_PLATFORM=compose
       - REG_TOKEN=${REG_TOKEN:-}
-      # - LICENSE_DEBUG=true
-        # OVERWRITE_SETTING_Prometheus_Enabled: true
-        # OVERWRITE_SETTING_Prometheus_Port: "${METRICS_PORT:-9458}"
+      - OVERWRITE_SETTING_Prometheus_Enabled=true
+      - OVERWRITE_SETTING_Prometheus_Port="${METRICS_PORT:-9458}"
+      - LICENSE_DEBUG=true
       #  TRANSPORTER: "${NATS_URL-monolith+nats://nats:4222}"
       - ADMIN_USERNAME
       - ADMIN_NAME
