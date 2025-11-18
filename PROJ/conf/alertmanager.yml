@@ -18,7 +18,7 @@ receivers:
     telegram_configs:
     - api_url: https://api.telegram.org
       # bot_token: ${BOT_TOKEN}
-      bot_token: 7716148114:AAGERVb_Jt61Hro_0p6yYVHy_JROxQmKj7E
+      bot_token:  ${BOT_TOKEN}
       chat_id: -1002865715313
       # parseMode: 'MarkdownV2' # The template I provide is in Markdown Mode
       # disableNotifications: false
