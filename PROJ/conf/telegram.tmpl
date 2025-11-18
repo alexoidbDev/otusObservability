@@ -1,0 +1,33 @@
+        {{ define "telegram.default.message" }}
+        {{- if eq .Status "firing" -}}
+            {{- if eq .CommonLabels.severity "critical" -}}
+                🔴 Alert: {{ .CommonLabels.alertname }}
+            {{- else if eq .CommonLabels.severity "warning" -}}
+                🟠 Alert: {{ .CommonLabels.alertname }}
+            {{- else -}}
+                ⚪️ Alert: {{ .CommonLabels.alertname }}
+            {{- end }}
+        Status: 🔥 FIRING
+        Severity: {{ if eq .CommonLabels.severity "critical" }}🔴 {{ .CommonLabels.severity | title }}{{ else if eq .CommonLabels.severity "warning" }}🟠 {{ .CommonLabels.severity | title }}{{ else }}⚪️ {{ .CommonLabels.severity | title }}{{ end }}
+        {{- else if eq .Status "resolved" -}}
+            ⚪️ Alert: {{ .CommonLabels.alertname }}
+        Status: ✅ RESOLVED
+        Severity: {{ if eq .CommonLabels.severity "critical" }}🟢 {{ .CommonLabels.severity | title }}{{ else if eq .CommonLabels.severity "warning" }}🟢 {{ .CommonLabels.severity | title }}{{ else }}⚪️ {{ .CommonLabels.severity | title }}{{ end }}
+        {{- end }}
+
+        {{- range .Alerts -}}
+
+        {{- if .Labels.job }}
+        Job: `{{ .Labels.job }}`
+        {{- end }}
+
+        {{- if .Labels.group }}
+        Group: `{{ .Labels.group }}`
+        {{- end }}
+
+        {{- if .Labels.instance }}
+        Instance: `{{ .Labels.instance }}`
+        {{- end }}
+
+        {{- end }}
+        {{ end }}

@@ -38,22 +38,25 @@ Vagrant.configure("2") do |config|
     
   # Список узлов с их именами и IP-адресами
   nodes = {
-    "app-node-1" => "192.168.250.11",
-    "app-node-2" => "192.168.250.12",
-    "app-node-3" => "192.168.250.13"
+    "app-node-1" => { "ip" => "192.168.250.11", "mac" => "080027000051", "natnet" => '10.0.51.0/24' },
+    "app-node-2" => { "ip" => "192.168.250.12", "mac" => "080027000052", "natnet" => '10.0.52.0/24' },
+    "app-node-3" => { "ip" => "192.168.250.13", "mac" => "080027000053", "natnet" => '10.0.53.0/24' }
   }
 
-  nodes.each do |name, ip|
+  nodes.each do |name, add|
     config.vm.define name do |node|
       node.vm.hostname = name
-      node.vm.network "private_network", ip: ip
+      node.vm.network "private_network", ip: add["ip"]
       node.vm.provision "rocketchat", type: "shell", path: "lib/rocketchat.sh"
 
       node.vm.provider "virtualbox" do |vb|
         vb.name = name
         vb.memory = machine_resources["app-node"]["memory"]
         vb.cpus = machine_resources["app-node"]["cpus"]
+        vb.customize ['modifyvm', :id, '--macaddress1', add["mac"]]
+        vb.customize ['modifyvm', :id, '--natnet1', add["natnet"]]
       end
+
     end
   end
 

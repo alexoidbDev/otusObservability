@@ -1,8 +1,8 @@
 services:
   rocketchat:
-    image: registry.rocket.chat/rocketchat/rocket.chat:${RELEASE:-latest}
+    # image: registry.rocket.chat/rocketchat/rocket.chat:${RELEASE:-latest}
     # image: rocket.chat:6.9.5
-    # image: rocketchat/rocket.chat:6.4.4
+    image: rocketchat/rocket.chat:6.4.4
     container_name: rocketchat
     restart: unless-stopped
     # healthcheck:
@@ -12,9 +12,10 @@ services:
     #   retries: 5
     expose:
       - ${PORT}
-    ports:
-      - "${HOST_PORT}:${PORT}"
-      - "${METRICS_PORT:-9458}:${METRICS_PORT:-9458}"
+    network_mode: host
+    # ports:
+    #   - "${HOST_PORT}:${PORT}"
+    #   - "${METRICS_PORT:-9458}:${METRICS_PORT:-9458}"
     extra_hosts:
       - "database:192.168.250.21"
       - "storage:192.168.250.22"
@@ -33,9 +34,12 @@ services:
       - INSTANCE_IP
       - DEPLOY_METHOD=docker
       - DEPLOY_PLATFORM=compose
+      - INITIAL_USER
       - REG_TOKEN=${REG_TOKEN:-}
-      - OVERWRITE_SETTING_Prometheus_Enabled=true
-      - OVERWRITE_SETTING_Prometheus_Port="${METRICS_PORT:-9458}"
+      - Prometheus_Enabled=true
+      # - Prometheus_Port="${METRICS_PORT:-9458}"
+      # - OVERWRITE_SETTING_Prometheus_Enabled=true
+      # - OVERWRITE_SETTING_Prometheus_Port="${METRICS_PORT:-9458}"
       - LICENSE_DEBUG=true
       #  TRANSPORTER: "${NATS_URL-monolith+nats://nats:4222}"
       - ADMIN_USERNAME

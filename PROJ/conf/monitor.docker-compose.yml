@@ -5,7 +5,7 @@ services:
     container_name: prometheus
     extra_hosts:
       - "database:192.168.250.21"
-      - "play.min.io:192.168.250.2"
+      - "play.min.io:192.168.250.22"
     ports:
       - "9090:9090"
     volumes:
@@ -25,7 +25,12 @@ services:
       - "9093:9093"
     volumes:
       - /opt/conf/alertmanager.yml:/etc/alertmanager/alertmanager.yml
+      - /opt/conf/telegram.tmpl:/etc/alertmanager/config/telegram.tmpl
       - alertmanager_data:/alertmanager
+      - /etc/ssl/certs:/etc/ssl/certs:ro
+      - /usr/local/share/ca-certificates:/usr/local/share/ca-certificates:ro
+    environment:
+      - BOT_TOKEN=${BOT_TOKEN}
     depends_on:
       - prometheus
     networks:

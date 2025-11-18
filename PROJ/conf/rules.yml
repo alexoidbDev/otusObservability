@@ -1,26 +1,27 @@
 groups:
-  - name: example_alerts
+  - name: alert_group
     rules:
-      - alert: HighCPUUsage
-        expr: node_cpu_usage_seconds_total{mode="idle"} < 0.1
-        for: 5m
+      - alert: NodeExporter
+        expr: up{job="node-exporter"} == 0
+        for: 20s
         labels:
           severity: critical
         annotations:
-          summary: "High CPU usage detected on instance {{ $labels.instance }}"
-          description: "CPU usage on {{ $labels.instance }} has been consistently high for 5 minutes."
+          summary: "Node exporter {{ $labels.instance }} is unavailable"
+          description: "Service {{ $labels.instance }} is unavailable\n "
+          # VALUE = {{ $value }}\n LABELS = {{ $labels }}
 
-# groups:
-#   - name: alert_group
-#     rules:
-#       - alert: NodeExporter
-#         expr: up{job="node_exporter"} == 0
-#         for: 20s
-#         labels:
-#           severity: critical
-#         annotations:
-#           summary: "Node exporter {{ $labels.instance }} is unavailable"
-#           description: "Serviceis unavailable\n VALUE = {{ $value }}\n LABELS = {{ $labels }}"
+  # - name: CPU_Usage_Alerts
+  #   rules:
+  #     - alert: HighCPUUsage
+  #       expr: 100 * (1 - avg by(instance) (rate(node_cpu_seconds_total{mode="idle"}[5m]))) > 80
+  #       for: 5m
+  #       labels:
+  #         severity: critical
+  #       annotations:
+  #         summary: "High CPU usage detected on {{$labels.instance}}"
+  #         description: "CPU usage on instance {{$labels.instance}} has been above 80% for the last 5 minutes."
+
 #       - alert: nginxExporter
 #         expr: up{job="nginx_exporter"} == 0
 #         for: 20s

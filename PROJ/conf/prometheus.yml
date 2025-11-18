@@ -5,35 +5,47 @@ scrape_configs:
   - job_name: 'node-exporter'
     static_configs:
       - targets: ['node-exporter:9100']
+      - targets: ['app-node-1:9100', 'app-node-2:9100']
+        labels:
+          group: 'app'
+      - targets: ['database:9100']
+        labels:
+          group: 'db'
+      - targets: ['storage:9100']
+        labels:
+          group: 'storage'
+      - targets: ['balancer:9100']
+
   - job_name: 'mongodb-exporter'
     static_configs:
       - targets: ['database:9216']
-  - job_name: 'db-node-exporter'
-    static_configs:
-      - targets: ['database:9100']
+        labels:
+          group: 'db'
   - job_name: 'minio-job'
     static_configs:
       - targets: ['play.min.io:9000']
+        labels:
+          group: 'storage'
     metrics_path: /minio/v2/metrics/cluster
   - job_name: 'minio-job-bucket'
     static_configs:
       - targets: ['play.min.io:9000']
+        labels:
+          group: 'storage'
     metrics_path: /minio/v2/metrics/bucket
-  # - job_name: 'minio-job-bucket'
-  #   static_configs:
-  #     - targets: ['play.min.io:9000']
   #   metrics_path: /minio/v2/metrics/node
-  - job_name: 'minio-node-exporter'
-    static_configs:
-      - targets: ['storage:9100']
-  - job_name: 'balancer-node-exporter'
-    static_configs:
-      - targets: ['balancer:9100']
   - job_name: 'balancer-nginx-exporter'
     static_configs:
       - targets: ['balancer:9113']
+  - job_name: 'rocketchat-exporter'
+    static_configs:
+      - targets: ['app-node-1:9458', 'app-node-2:9458']
+        labels:
+          group: 'app'
 
 
+rule_files:
+  - rules.yml
 alerting:
   alertmanagers:
     - static_configs:
