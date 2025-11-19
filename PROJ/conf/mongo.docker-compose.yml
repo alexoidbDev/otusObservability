@@ -110,7 +110,8 @@ services:
 
   mongodb-exporter:
     container_name: mongodb-exporter
-    image: percona/mongodb_exporter:0.47
+    # image: percona/mongodb_exporter:0.47
+    image: percona/mongodb_exporter:0.42
     depends_on:
       - mongo1
       - mongo2
@@ -121,10 +122,17 @@ services:
     ports:
       - "9216:9216"
     environment:
-      - "MONGODB_URI=mongodb://database:27017/admin,mongodb://database:27018/admin,mongodb://database:27019/admin"
+      - "MONGODB_URI=mongodb://database:27017,database:27018,database:27019/admin"
+      # - "MONGODB_URI=mongodb://database:27017/admin,mongodb://database:27018/admin,mongodb://database:27019/admin"
       # - MONGODB_USER=admin
       # - MONGODB_PASSWORD=admin
     restart: unless-stopped
+    command:
+      - '--compatible-mode'
+      - '--split-cluster=true'
+      - '--mongodb.collstats-colls=rocketchat'
+      - '--mongodb.indexstats-colls=rocketchat'
+      - '--mongodb.global-conn-pool'
     networks:
       - mongo-net
 

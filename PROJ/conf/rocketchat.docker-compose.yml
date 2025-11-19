@@ -56,6 +56,16 @@ services:
             regex: compose_project
           - action: labeldrop
             regex: filename
+          - action: replace
+            target_label: host
+            replacement: ${HOSTNAME}
+          - action: replace
+            target_label: service_name
+            replacement: rocketchat_${HOSTNAME}
+
+#           - action: replace
+#             regex: service_name
+#             replacement: rocketchat_${HOSTNAME}
 
   node-exporter:
     image: prom/node-exporter:latest

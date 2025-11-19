@@ -16,5 +16,6 @@ export ADMIN_NAME="admin"
 export ADMIN_EMAIL=chatmaster@localhost.com
 export ADMIN_PASS=chatmasterassword
 export INITIAL_USER=yes
+export HOSTNAME=`hostname`
 
-export REG_TOKEN=8024fe1b-7605-43f6-848b-9c9f5379a344
+# export REG_TOKEN=

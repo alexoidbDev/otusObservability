@@ -16,10 +16,14 @@ receivers:
   # - name: 'default-receiver'
   - name: 'telegram'
     telegram_configs:
-    - api_url: https://api.telegram.org
-      # bot_token: ${BOT_TOKEN}
-      bot_token:  ${BOT_TOKEN}
-      chat_id: -1002865715313
-      # parseMode: 'MarkdownV2' # The template I provide is in Markdown Mode
-      # disableNotifications: false
-      # sendResolved: true
+      - chat_id: -1002865715313
+        bot_token_file: /opt/telegram.token
+        parse_mode: 'HTML'
+        message: '{{ template "telegram.message". }}' 
+        # api_url: https://api.telegram.org
+        # bot_token: BOT_TOKEN
+        # disableNotifications: false
+        # sendResolved: true
+
+templates:
+  - '/etc/alertmanager/config/telegram.tmpl'     

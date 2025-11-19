@@ -9,7 +9,7 @@ Vagrant.configure("2") do |config|
   # }
   machine_resources = {
     "balancer" => { "cpus" => 1, "memory" => 512 },
-    "app-node" => { "cpus" => 1, "memory" => 4048 },
+    "app-node" => { "cpus" => 1, "memory" => 1024 },
     "database" => { "cpus" => 2, "memory" => 2048 },
     "storage"  => { "cpus" => 2, "memory" => 2048 },
     "monitor"  => { "cpus" => 2, "memory" => 2048 }
@@ -40,7 +40,7 @@ Vagrant.configure("2") do |config|
   nodes = {
     "app-node-1" => { "ip" => "192.168.250.11", "mac" => "080027000051", "natnet" => '10.0.51.0/24' },
     "app-node-2" => { "ip" => "192.168.250.12", "mac" => "080027000052", "natnet" => '10.0.52.0/24' },
-    "app-node-3" => { "ip" => "192.168.250.13", "mac" => "080027000053", "natnet" => '10.0.53.0/24' }
+    # "app-node-3" => { "ip" => "192.168.250.13", "mac" => "080027000053", "natnet" => '10.0.53.0/24' }
   }
 
   nodes.each do |name, add|

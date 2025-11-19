@@ -26,6 +26,7 @@ services:
     volumes:
       - /opt/conf/alertmanager.yml:/etc/alertmanager/alertmanager.yml
       - /opt/conf/telegram.tmpl:/etc/alertmanager/config/telegram.tmpl
+      - /opt/conf/telegram.token:/opt/telegram.token
       - alertmanager_data:/alertmanager
       - /etc/ssl/certs:/etc/ssl/certs:ro
       - /usr/local/share/ca-certificates:/usr/local/share/ca-certificates:ro
