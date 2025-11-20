@@ -20,10 +20,6 @@ services:
             regex: compose_project
           - action: labeldrop
             regex: filename
-    # logging:
-    #   driver: json-file # Ensure Docker uses json-file logging driver
-    #   options:
-    #     tag: "{{.ImageName}}/{{.Name}}/{{.ID}}" 
     restart: unless-stopped
     networks:
       - mongo-net
@@ -50,12 +46,6 @@ services:
             regex: compose_project
           - action: labeldrop
             regex: filename
-        # loki-batch-size: "400"
-        # loki-batch-wait: "1s"
-    # logging:
-    #   driver: json-file # Ensure Docker uses json-file logging driver
-    #   options:
-    #     tag: "{{.ImageName}}/{{.Name}}/{{.ID}}" 
     restart: unless-stopped
     networks:
       - mongo-net
@@ -81,10 +71,6 @@ services:
             regex: compose_project
           - action: labeldrop
             regex: filename
-    # logging:
-    #   driver: json-file # Ensure Docker uses json-file logging driver
-    #   options:
-    #     tag: "{{.ImageName}}/{{.Name}}/{{.ID}}" 
     restart: unless-stopped
     networks:
       - mongo-net
@@ -128,31 +114,14 @@ services:
       # - MONGODB_PASSWORD=admin
     restart: unless-stopped
     command:
-      - '--compatible-mode'
-      - '--split-cluster=true'
-      - '--mongodb.collstats-colls=rocketchat'
-      - '--mongodb.indexstats-colls=rocketchat'
-      - '--mongodb.global-conn-pool'
+      - --compatible-mode
+      - --collect-all
+      # - --split-cluster=true
+      # - --mongodb.collstats-colls=rocketchat
+      # - --mongodb.indexstats-colls=rocketchat
+      # - --mongodb.global-conn-pool
     networks:
       - mongo-net
-
-  # promtail:
-  #   container_name: promtail
-  #   image: grafana/promtail:latest
-  #   extra_hosts:
-  #     - "monitor:192.168.250.30"
-  #   volumes:
-  #     - /var/lib/docker/containers:/var/lib/docker/containers:ro
-  #     - /var/run/docker.sock:/var/run/docker.sock
-  #     - /opt/conf/promtail-mongo.yaml:/etc/promtail/promtail-config.yaml
-  #   command: -config.file=/etc/promtail/promtail-config.yaml
-  #   depends_on:
-  #     - mongo1
-  #     - mongo2
-  #     - mongo3
-  #   restart: unless-stopped
-  #   networks:
-  #     - mongo-net
 
   node-exporter:
     image: prom/node-exporter:latest

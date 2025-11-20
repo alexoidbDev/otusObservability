@@ -30,8 +30,8 @@ services:
       - alertmanager_data:/alertmanager
       - /etc/ssl/certs:/etc/ssl/certs:ro
       - /usr/local/share/ca-certificates:/usr/local/share/ca-certificates:ro
-    environment:
-      - BOT_TOKEN=${BOT_TOKEN}
+    # environment:
+    #   - BOT_TOKEN=${BOT_TOKEN}
     depends_on:
       - prometheus
     networks:
@@ -61,7 +61,9 @@ services:
     volumes:
       - grafana_data:/var/lib/grafana
       - /opt/conf/provisioning/:/etc/grafana/provisioning/
-      # - /opt/conf/grafana-provisioning.yaml:/etc/grafana/provisioning/datasources/datasources.yml
+      - /etc/ssl/certs:/etc/ssl/certs:ro
+      - /usr/local/share/ca-certificates:/usr/local/share/ca-certificates:ro
+    # - /opt/conf/grafana-provisioning.yaml:/etc/grafana/provisioning/datasources/datasources.yml
     depends_on:
       - prometheus
       - loki
