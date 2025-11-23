@@ -21,6 +21,13 @@ scrape_configs:
       - targets: ['database:9216']
         labels:
           group: 'db'
+
+  # - job_name: 'mongodbsa-exporter'
+  #   static_configs:
+  #     - targets: ['database:9217']
+  #       labels:
+  #         group: 'db'
+
   - job_name: 'minio-job'
     static_configs:
       - targets: ['play.min.io:9000']

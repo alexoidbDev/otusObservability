@@ -116,10 +116,10 @@ services:
     command:
       - --compatible-mode
       - --collect-all
-      # - --split-cluster=true
-      # - --mongodb.collstats-colls=rocketchat
-      # - --mongodb.indexstats-colls=rocketchat
-      # - --mongodb.global-conn-pool
+      - --split-cluster=true
+      - --mongodb.collstats-colls=rocketchat
+      - --mongodb.indexstats-colls=rocketchat
+      - --mongodb.global-conn-pool
     networks:
       - mongo-net
 

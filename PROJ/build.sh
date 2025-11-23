@@ -12,5 +12,5 @@ fi
 
 
 vagrant up database storage monitor
-vagrant up --parallel app-node-1 app-node-2 app-node-3
+vagrant up --parallel app-node-1 app-node-2
 vagrant up balancer

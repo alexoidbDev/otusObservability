@@ -8,10 +8,10 @@ Vagrant.configure("2") do |config|
   #   "storage"  => { "cpus" => 2, "memory" => 1024 }
   # }
   machine_resources = {
-    "balancer" => { "cpus" => 1, "memory" => 512 },
-    "app-node" => { "cpus" => 1, "memory" => 1024 },
+    "balancer" => { "cpus" => 2, "memory" => 512 },
+    "app-node" => { "cpus" => 2, "memory" => 1024 },
     "database" => { "cpus" => 2, "memory" => 2048 },
-    "storage"  => { "cpus" => 2, "memory" => 2048 },
+    "storage"  => { "cpus" => 2, "memory" => 1024 },
     "monitor"  => { "cpus" => 2, "memory" => 2048 }
   }
   

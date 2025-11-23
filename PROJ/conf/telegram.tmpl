@@ -13,7 +13,7 @@
 🏷 Labels:
 {{ range .Labels.SortedPairs }}  <i>{{ .Name }}</i>: <code>{{ .Value }}</code>
 {{ end }}{{ end }}
-🛠 <a href="https://grafana.prod.global:3000">Grafana</a> 💊 <a href="https://alertmanager.prod.global:9093">Alertmanager</a> 💊 <a href="https://">Any other link</a> 🛠
+🛠 <a href="http://192.168.250.30:3000">Grafana</a> 💊 <a href="http://192.168.250.30:9093/">Alertmanager</a> 💊 <a href="https://">Any other link</a> 🛠
 {{ end }}
 
 {{ define "telegram.message" }}
